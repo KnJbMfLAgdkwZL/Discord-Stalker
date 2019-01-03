@@ -22,6 +22,26 @@ class api_helper {
         }
         return res
     }
+
+    static clearResult(data) {
+        let result = []
+        for (let k in data) {
+            let str = data[k].match(new RegExp('https://discord.gg/([a-zA-Z0-9]+)'))
+            if (str && str[0])
+                result.push(str[0])
+        }
+        return result
+    }
+
+    static removeDuplicat(data) {
+        let tmp = {}
+        for (let k in data)
+            tmp[data[k]] = true
+        let result = []
+        for (let k in tmp)
+            result.push(k)
+        return result
+    }
 }
 
 module.exports = api_helper

@@ -1,17 +1,30 @@
 const discord_api = require('./discord_api')
 
-const Helper = require('./api_helper')
+const api_helper = require('./api_helper')
 
 let friends = new require('../models/friends')
 friends = new friends()
 
+let invites = require('../models/invites')
+invites = new invites()
+
+let invites_dead = require('../models/invites_dead')
+invites_dead = new invites_dead()
+
 let guilds_check = require('../models/guilds_check')
 guilds_check = new guilds_check()
 
+let _this
+
+
 class discord_heper {
     constructor(client) {
+        _this = this
+
         this.myAPI = new discord_api()
+
         this.client = client
+
         let tmp = friends.select()
         let _friends = {}
         for (let k in tmp) {
@@ -19,10 +32,11 @@ class discord_heper {
             _friends[v.id] = v
         }
         this.friends = _friends
+
         this.calculating_members = 0
-        this.members = []
     }
 
+//----------------------------------------------------------------------------------------------------
     SortGuilds() {
         let data = guilds_check.select({}, {
             frieds_in_voise: 'DESC',
@@ -39,60 +53,155 @@ class discord_heper {
     }
 
 //----------------------------------------------------------------------------------------------------
-    GetAllUrl() {
-        function clearResult(data) {
-            let result = []
+    search_guild_urls(guild) {
+        guild.search({content: 'https://discord.gg/'}).then(res => {
+            let data = api_helper.GetSearchResult(res)
+            data = api_helper.clearResult(data)
+            data = api_helper.removeDuplicat(data)
             for (let k in data) {
-                let str = data[k].match(new RegExp('https://discord.gg/([a-zA-Z0-9]+)'))
-                if (str && str[0])
-                    result.push(str[0])
+                let row = {
+                    url: data[k],
+                    guild_id: '',
+                    guild_name: '',
+                    guild_icon: '',
+                    inviter_id: '',
+                    inviter_username: '',
+                    inviter_discriminator: '',
+                    inviter_avatar: '',
+                    inviter_bot: ''
+                }
+                _this.client.fetchInvite(row.url).then(function (invite) {
+                    if (invite) {
+                        if (invite.guild) {
+                            if (invite.guild.id)
+                                row.guild_id = invite.guild.id
+                            if (invite.guild.name)
+                                row.guild_name = invite.guild.name
+                            if (invite.guild.icon)
+                                row.guild_icon = invite.guild.icon
+                        }
+                        if (invite.inviter) {
+                            if (invite.inviter.id)
+                                row.inviter_id = invite.inviter.id
+                            if (invite.inviter.username)
+                                row.inviter_username = invite.inviter.username
+                            if (invite.inviter.discriminator)
+                                row.inviter_discriminator = invite.inviter.discriminator
+                            if (invite.inviter.avatar)
+                                row.inviter_avatar = invite.inviter.avatar
+                            if (invite.inviter.bot)
+                                row.inviter_bot = invite.inviter.bot
+                        }
+                        invites.insert_update(row, {url: row.url})
+                    }
+                }).catch(function (err) {
+                    invites_dead.insert_update(row)
+                })
             }
-            return result
-        }
-
-        function removeDuplicat(data) {
-            let tmp = {}
-            for (let k in data)
-                tmp[data[k]] = true
-            let result = []
-            for (let k in tmp)
-                result.push(k)
-            return result
-        }
-
-        let size = this.client.guilds.size
-        let result = []
-
-
-        /*
-        this.client.fetchInvite('https://discord.gg/8YPDucM').then(function (invite) {
-            console.log(invite)
         }).catch(function (err) {
             console.log(err)
         })
-        */
 
-        /*
+    }
+
+//----------------------------------------------------------------------------------------------------
+    search_all_urls() {
+        let size = this.client.guilds.size
+        let result = []
         this.client.guilds.forEach(function logMapElements(guild, guild_id) {
             guild.search({content: 'https://discord.gg/'}).then(res => {
-                //let data = Helper.GetSearchResult(res)
-                //Array.prototype.push.apply(result, clearResult(data))
+                let data = api_helper.GetSearchResult(res)
+                Array.prototype.push.apply(result, api_helper.clearResult(data))
                 size--
                 if (!size) {
-                    //console.log(result.length)
-                    //result = removeDuplicat(result)
+                    result = removeDuplicat(result)
+                    for (let k in result) {
+                        let row = {
+                            url: result[k],
+                            guild_id: '',
+                            guild_name: '',
+                            guild_icon: '',
+                            inviter_id: '',
+                            inviter_username: '',
+                            inviter_discriminator: '',
+                            inviter_avatar: '',
+                            inviter_bot: ''
+                        }
+                        _this.client.fetchInvite(row.url).then(function (invite) {
+                            if (invite) {
+                                if (invite.guild) {
+                                    if (invite.guild.id)
+                                        row.guild_id = invite.guild.id
+                                    if (invite.guild.name)
+                                        row.guild_name = invite.guild.name
+                                    if (invite.guild.icon)
+                                        row.guild_icon = invite.guild.icon
+                                }
+                                if (invite.inviter) {
+                                    if (invite.inviter.id)
+                                        row.inviter_id = invite.inviter.id
+                                    if (invite.inviter.username)
+                                        row.inviter_username = invite.inviter.username
+                                    if (invite.inviter.discriminator)
+                                        row.inviter_discriminator = invite.inviter.discriminator
+                                    if (invite.inviter.avatar)
+                                        row.inviter_avatar = invite.inviter.avatar
+                                    if (invite.inviter.bot)
+                                        row.inviter_bot = invite.inviter.bot
+                                }
+                                invites.insert_update(row, {url: row.url})
+                            }
+                        }).catch(function (err) {
+                            invites_dead.insert_update(row)
+                        })
+                    }
                 }
-            }).catch(console.error)
+            })
         })
-        */
+    }
 
+//----------------------------------------------------------------------------------------------------
+    check_urls_in_db() {
+        let data = invites.select()
+        for (let k in data) {
+            let row = data[k]
+            this.client.fetchInvite(row.url).then(function (invite) {
+                if (invite) {
+                    if (invite.guild) {
+                        if (invite.guild.id)
+                            row.guild_id = invite.guild.id
+                        if (invite.guild.name)
+                            row.guild_name = invite.guild.name
+                        if (invite.guild.icon)
+                            row.guild_icon = invite.guild.icon
+                    }
+                    if (invite.inviter) {
+                        if (invite.inviter.id)
+                            row.inviter_id = invite.inviter.id
+                        if (invite.inviter.username)
+                            row.inviter_username = invite.inviter.username
+                        if (invite.inviter.discriminator)
+                            row.inviter_discriminator = invite.inviter.discriminator
+                        if (invite.inviter.avatar)
+                            row.inviter_avatar = invite.inviter.avatar
+                        if (invite.inviter.bot)
+                            row.inviter_bot = invite.inviter.bot
+                    }
+                    invites.update(row, {url: row.url})
+                }
+            }).catch(function (err) {
+                invites.delete({
+                    url: row.url
+                })
+                invites_dead.insert_update(row)
+            })
 
+        }
     }
 
 //----------------------------------------------------------------------------------------------------
     LogUsersGuilds() {
         this.calculating_members = 1
-        let _this = this
         let guilds_size = this.client.guilds.size
         this.client.guilds.forEach(function logMapElements(guild, guild_id) {
             guild.fetchMembers().then(function (_guild) {
@@ -127,7 +236,6 @@ class discord_heper {
 
 //----------------------------------------------------------------------------------------------------
     FindFriends() {
-        let _this = this
         let guilds = []
         this.client.guilds.forEach(function logMapElements(guild, key) {
             let _guild = _this.FindFriends_InVoice(guild)

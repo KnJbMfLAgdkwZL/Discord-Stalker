@@ -1,28 +1,40 @@
 let friends_logs = require('../models/friends_logs')
 friends_logs = new friends_logs()
 
-
 let client
+let discord_heper
 
 class discord_controllers {
     constructor() {
         const fs = require('fs')
         let config = JSON.parse(fs.readFileSync('../config.json', 'utf8'))
-        let token = config.token
+        this.token = config.token
         const discord = require('discord.js')
         client = new discord.Client()
         this.client = client
         client.on('ready', this.ready)
         //client.on('voiceStateUpdate', this.voiceStateUpdate)
-        client.login(token)
+    }
+
+    login() {
+        client.login(this.token)
+    }
+
+    set_helper(heper) {
+        discord_heper = heper
     }
 
     ready() {
         console.log(`Logged in as ${client.user.tag}`)
         console.log()
-        //discordHeper.GetAllUrl()
-        //discordHeper.SortGuilds()
-        //discordHeper.LogUsersGuilds()
+
+
+        //discord_heper.search_guild_urls(client.guilds.get('530045665296777226'))
+        //discord_heper.search_all_urls()
+        //discord_heper.SortGuilds()
+        //discord_heper.LogUsersGuilds()
+
+
     }
 
     voiceStateUpdate(oldMember, newMember) {
