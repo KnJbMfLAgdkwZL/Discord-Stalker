@@ -1,6 +1,6 @@
 const request = require('sync-request')
 
-class DiscordAPI {
+class discord_api {
     constructor(token) {
         this.token = token
     }
@@ -131,4 +131,4 @@ class DiscordAPI {
 
 }
 
-module.exports = DiscordAPI
+module.exports = discord_api

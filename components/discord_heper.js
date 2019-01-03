@@ -1,27 +1,35 @@
-const DataBase = require('./DataBase.js')
-const DiscordAPI = require('./DiscordAPI.js')
-const Helper = require('./Helper.js')
+const DiscordAPI = require('./discord_api')
 
+const Helper = require('./api_helper')
 
-class DiscordHeper {
+let friends = new require('../models/friends')
+friends = new friends()
+
+let guilds_check = require('../models/guilds_check')
+guilds_check = new guilds_check()
+
+class discord_heper {
     constructor(token, client) {
         this.myAPI = new DiscordAPI(token)
         this.client = client
-
-        let tmp = DataBase.Select_friends()
-        let friends = {}
+        let tmp = friends.select()
+        let _friends = {}
         for (let k in tmp) {
             let v = tmp[k]
-            friends[v.id] = v
+            _friends[v.id] = v
         }
-        this.friends = friends
-
+        this.friends = _friends
         this.calculating_members = 0
         this.members = []
     }
 
     SortGuilds() {
-        let data = DataBase.Select_guilds_check()
+        let data = guilds_check.select({}, {
+            frieds_in_voise: 'DESC',
+            users_in_voise: 'DESC',
+            frieds_on_server: 'DESC',
+            users_on_server: 'DESC'
+        })
         let arr = []
         for (let k in data) {
             let v = data[k]
@@ -52,32 +60,32 @@ class DiscordHeper {
             return result
         }
 
-        let seze = this.client.guilds.size
+        let size = this.client.guilds.size
         let result = []
 
 
-        /*this.client.fetchInvite('https://discord.gg/8YPDucM').then(function (invite) {
+        /*
+        this.client.fetchInvite('https://discord.gg/8YPDucM').then(function (invite) {
             console.log(invite)
         }).catch(function (err) {
             console.log(err)
-        })*/
-
-        console.log(this.friends)
-
+        })
+        */
 
         /*
         this.client.guilds.forEach(function logMapElements(guild, guild_id) {
             guild.search({content: 'https://discord.gg/'}).then(res => {
                 //let data = Helper.GetSearchResult(res)
                 //Array.prototype.push.apply(result, clearResult(data))
-                seze--
-                if (!seze) {
+                size--
+                if (!size) {
                     //console.log(result.length)
                     //result = removeDuplicat(result)
                 }
             }).catch(console.error)
         })
         */
+
 
     }
 
@@ -108,11 +116,10 @@ class DiscordHeper {
                         if (channel.members.get(key))
                             result.frieds_in_voise++
                 })
-                DataBase.Insert_or_Update_guilds_check(result)
+                guilds_check.insert_update(result)
                 guilds_size--
                 if (guilds_size <= 0) {
                     _this.calculating_members = 0
-                    console.log('Done from test()')
                 }
             })
         })
@@ -183,4 +190,4 @@ class DiscordHeper {
     }
 }
 
-module.exports = DiscordHeper
+module.exports = discord_heper

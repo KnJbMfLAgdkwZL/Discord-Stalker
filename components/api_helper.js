@@ -1,4 +1,4 @@
-class Helper {
+class api_helper {
     static GetSearchResult(data) {
         data = data['messages']
         let res = []
@@ -24,4 +24,4 @@ class Helper {
     }
 }
 
-module.exports = Helper
+module.exports = api_helper

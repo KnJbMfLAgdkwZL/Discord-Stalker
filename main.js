@@ -1,24 +1,26 @@
 const Discord = require('discord.js')
-const DiscordHeper = require('./myClass/DiscordHeper.js')
-const fs = require('fs')
 
-let config_json = JSON.parse(fs.readFileSync('../config.json', 'utf8'));
+const DiscordHeper = require('./components/discord_heper')
+
+const fs = require('fs')
+let config_json = JSON.parse(fs.readFileSync('../config.json', 'utf8'))
 let token = config_json.token
 
 let client = new Discord.Client()
-client.login(token);
+client.login(token)
 let discordHeper = new DiscordHeper(token, client)
 
-client.on('ready', () => {
+
+function qwe() {
     console.log(`Logged in as ${client.user.tag}`)
     console.log()
-
-    discordHeper.GetAllUrl()
+    //discordHeper.GetAllUrl()
     //discordHeper.SortGuilds()
     //discordHeper.LogUsersGuilds()
+}
 
+client.on('ready', qwe)
 
-})
 
 //sqlite.close()
 
@@ -92,30 +94,24 @@ app.engine('.hbs', exphbs({
 
 app.set('view engine', '.hbs')
 app.set('views', path.join(__dirname, 'html'))
-app.disable('view cache');
+app.disable('view cache')
 
 app.listen(port, (err) => {
-    if (err) {
+    if (err)
         return console.log('something bad happened', err)
-    }
     console.log(`server is listening on ${port}`)
 })
 
 app.get('/findfriends', (request, response) => {
     let guilds = discordHeper.FindFriends()
-    response.render('index', {
-        guilds: guilds
-    })
+    response.render('index', {guilds: guilds})
 })
 
 app.get('/qwe', (request, response) => {
     discordHeper.test()
-
-    var sleep = require('system-sleep')
-    while (discordHeper.calculating_members) {
+    const sleep = require('system-sleep')
+    while (discordHeper.calculating_members)
         sleep(1000)
-        //console.log(discordHeper.calculating_members)
-    }
     console.log('Done')
 
     let guilds = 12312321
