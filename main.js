@@ -7,4 +7,3 @@ discord_heper = new discord_heper(discord_controllers.client)
 let http_controllers = require('./controllers/http_controllers')
 http_controllers = new http_controllers(discord_heper)
 
-
