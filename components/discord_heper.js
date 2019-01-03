@@ -1,4 +1,4 @@
-const DiscordAPI = require('./discord_api')
+const discord_api = require('./discord_api')
 
 const Helper = require('./api_helper')
 
@@ -9,8 +9,8 @@ let guilds_check = require('../models/guilds_check')
 guilds_check = new guilds_check()
 
 class discord_heper {
-    constructor(token, client) {
-        this.myAPI = new DiscordAPI(token)
+    constructor(client) {
+        this.myAPI = new discord_api()
         this.client = client
         let tmp = friends.select()
         let _friends = {}

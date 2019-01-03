@@ -1,7 +1,10 @@
 const request = require('sync-request')
 
 class discord_api {
-    constructor(token) {
+    constructor() {
+        const fs = require('fs')
+        let config = JSON.parse(fs.readFileSync('../config.json', 'utf8'))
+        let token = config.token
         this.token = token
     }
 
