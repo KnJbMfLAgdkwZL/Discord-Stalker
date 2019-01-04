@@ -1,6 +1,4 @@
-let friends_logs = require('../models/friends_logs')
-friends_logs = new friends_logs()
-
+let friends_logs = new (require('../models/friends_logs'))
 let client
 let discord_heper
 
@@ -29,10 +27,9 @@ class discord_controllers {
         console.log()
 
 
-        //discord_heper.search_guild_urls(client.guilds.get('530045665296777226'))
-        //discord_heper.search_all_urls()
-        //discord_heper.SortGuilds()
-        //discord_heper.LogUsersGuilds()
+        //discord_heper.Search_guild_urls(client.guilds.get('475217337461506050'))
+        //discord_heper.Search_all_urls()
+        //discord_heper.Check_urls_in_db()
 
 
     }

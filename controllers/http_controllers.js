@@ -32,7 +32,7 @@ class http_controllers {
     }
 
     findfriends(request, response) {
-        let guilds = discord_heper.FindFriends()
+        let guilds = discord_heper.Find_friends()
         response.render('index', {guilds: guilds})
     }
 

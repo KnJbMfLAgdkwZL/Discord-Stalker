@@ -1,29 +1,15 @@
-const discord_api = require('./discord_api')
-
 const api_helper = require('./api_helper')
-
-let friends = new require('../models/friends')
-friends = new friends()
-
-let invites = require('../models/invites')
-invites = new invites()
-
-let invites_dead = require('../models/invites_dead')
-invites_dead = new invites_dead()
-
-let guilds_check = require('../models/guilds_check')
-guilds_check = new guilds_check()
-
+let discord_api = new (require('./discord_api'))
+let friends = new (require('../models/friends'))
+let invites = new (require('../models/invites'))
+let invites_dead = new (require('../models/invites_dead'))
+let guilds_check = new (require('../models/guilds_check'))
 let _this
-
 
 class discord_heper {
     constructor(client) {
         _this = this
-
-        this.myAPI = new discord_api()
-
-        this.client = client
+        _this.client = client
 
         let tmp = friends.select()
         let _friends = {}
@@ -31,13 +17,13 @@ class discord_heper {
             let v = tmp[k]
             _friends[v.id] = v
         }
-        this.friends = _friends
 
-        this.calculating_members = 0
+        _this.friends = _friends
+        _this.calculating_members = 0
     }
 
 //----------------------------------------------------------------------------------------------------
-    SortGuilds() {
+    Sort_guilds_from_db() {
         let data = guilds_check.select({}, {
             frieds_in_voise: 'DESC',
             users_in_voise: 'DESC',
@@ -45,165 +31,88 @@ class discord_heper {
             users_on_server: 'DESC'
         })
         let arr = []
-        for (let k in data) {
-            let v = data[k]
-            arr.push(v.guild_id)
-        }
-        this.myAPI.SortGuilds(arr)
+        for (let k in data)
+            arr.push(data[k].guild_id)
+        discord_api.SortGuilds(arr)
     }
 
-//----------------------------------------------------------------------------------------------------
-    search_guild_urls(guild) {
-        guild.search({content: 'https://discord.gg/'}).then(res => {
-            let data = api_helper.GetSearchResult(res)
-            data = api_helper.clearResult(data)
-            data = api_helper.removeDuplicat(data)
-            for (let k in data) {
-                let row = {
-                    url: data[k],
-                    guild_id: '',
-                    guild_name: '',
-                    guild_icon: '',
-                    inviter_id: '',
-                    inviter_username: '',
-                    inviter_discriminator: '',
-                    inviter_avatar: '',
-                    inviter_bot: ''
-                }
-                _this.client.fetchInvite(row.url).then(function (invite) {
-                    if (invite) {
-                        if (invite.guild) {
-                            if (invite.guild.id)
-                                row.guild_id = invite.guild.id
-                            if (invite.guild.name)
-                                row.guild_name = invite.guild.name
-                            if (invite.guild.icon)
-                                row.guild_icon = invite.guild.icon
-                        }
-                        if (invite.inviter) {
-                            if (invite.inviter.id)
-                                row.inviter_id = invite.inviter.id
-                            if (invite.inviter.username)
-                                row.inviter_username = invite.inviter.username
-                            if (invite.inviter.discriminator)
-                                row.inviter_discriminator = invite.inviter.discriminator
-                            if (invite.inviter.avatar)
-                                row.inviter_avatar = invite.inviter.avatar
-                            if (invite.inviter.bot)
-                                row.inviter_bot = invite.inviter.bot
-                        }
-                        invites.insert_update(row, {url: row.url})
-                    }
-                }).catch(function (err) {
-                    invites_dead.insert_update(row)
-                })
+    clear_res_urls(res) {
+        res = api_helper.GetSearchResult(res)
+        res = api_helper.clearResult(res)
+        res = api_helper.removeDuplicat(res)
+        for (let k in res) {
+            let row = {
+                url: res[k],
+                guild_id: '',
+                guild_name: '',
+                guild_icon: '',
+                inviter_id: '',
+                inviter_username: '',
+                inviter_discriminator: '',
+                inviter_avatar: '',
+                inviter_bot: ''
             }
+            _this.check_url(row)
+        }
+    }
+
+    check_url(row) {
+        _this.client.fetchInvite(row.url).then(function (invite) {
+            if (invite) {
+                if (invite.guild) {
+                    if (invite.guild.id)
+                        row.guild_id = invite.guild.id
+                    if (invite.guild.name)
+                        row.guild_name = invite.guild.name
+                    if (invite.guild.icon)
+                        row.guild_icon = invite.guild.icon
+                }
+                if (invite.inviter) {
+                    if (invite.inviter.id)
+                        row.inviter_id = invite.inviter.id
+                    if (invite.inviter.username)
+                        row.inviter_username = invite.inviter.username
+                    if (invite.inviter.discriminator)
+                        row.inviter_discriminator = invite.inviter.discriminator
+                    if (invite.inviter.avatar)
+                        row.inviter_avatar = invite.inviter.avatar
+                    if (invite.inviter.bot)
+                        row.inviter_bot = invite.inviter.bot
+                }
+                invites.insert_update(row, {url: row.url})
+            }
+        }).catch(function (err) {
+            invites.delete({url: row.url})
+            invites_dead.insert_update(row)
+        })
+    }
+
+    Search_guild_urls(guild) {
+        guild.search({content: 'https://discord.gg/'}).then(res => {
+            _this.clear_res_urls(res)
         }).catch(function (err) {
             console.log(err)
         })
-
     }
 
-//----------------------------------------------------------------------------------------------------
-    search_all_urls() {
-        let size = this.client.guilds.size
-        let result = []
-        this.client.guilds.forEach(function logMapElements(guild, guild_id) {
-            guild.search({content: 'https://discord.gg/'}).then(res => {
-                let data = api_helper.GetSearchResult(res)
-                Array.prototype.push.apply(result, api_helper.clearResult(data))
-                size--
-                if (!size) {
-                    result = removeDuplicat(result)
-                    for (let k in result) {
-                        let row = {
-                            url: result[k],
-                            guild_id: '',
-                            guild_name: '',
-                            guild_icon: '',
-                            inviter_id: '',
-                            inviter_username: '',
-                            inviter_discriminator: '',
-                            inviter_avatar: '',
-                            inviter_bot: ''
-                        }
-                        _this.client.fetchInvite(row.url).then(function (invite) {
-                            if (invite) {
-                                if (invite.guild) {
-                                    if (invite.guild.id)
-                                        row.guild_id = invite.guild.id
-                                    if (invite.guild.name)
-                                        row.guild_name = invite.guild.name
-                                    if (invite.guild.icon)
-                                        row.guild_icon = invite.guild.icon
-                                }
-                                if (invite.inviter) {
-                                    if (invite.inviter.id)
-                                        row.inviter_id = invite.inviter.id
-                                    if (invite.inviter.username)
-                                        row.inviter_username = invite.inviter.username
-                                    if (invite.inviter.discriminator)
-                                        row.inviter_discriminator = invite.inviter.discriminator
-                                    if (invite.inviter.avatar)
-                                        row.inviter_avatar = invite.inviter.avatar
-                                    if (invite.inviter.bot)
-                                        row.inviter_bot = invite.inviter.bot
-                                }
-                                invites.insert_update(row, {url: row.url})
-                            }
-                        }).catch(function (err) {
-                            invites_dead.insert_update(row)
-                        })
-                    }
-                }
-            })
+    Search_all_urls() {
+        _this.client.guilds.forEach(function logMapElements(guild, guild_id) {
+            _this.Search_guild_urls(guild)
         })
     }
 
-//----------------------------------------------------------------------------------------------------
-    check_urls_in_db() {
+    Check_urls_in_db() {
         let data = invites.select()
         for (let k in data) {
             let row = data[k]
-            this.client.fetchInvite(row.url).then(function (invite) {
-                if (invite) {
-                    if (invite.guild) {
-                        if (invite.guild.id)
-                            row.guild_id = invite.guild.id
-                        if (invite.guild.name)
-                            row.guild_name = invite.guild.name
-                        if (invite.guild.icon)
-                            row.guild_icon = invite.guild.icon
-                    }
-                    if (invite.inviter) {
-                        if (invite.inviter.id)
-                            row.inviter_id = invite.inviter.id
-                        if (invite.inviter.username)
-                            row.inviter_username = invite.inviter.username
-                        if (invite.inviter.discriminator)
-                            row.inviter_discriminator = invite.inviter.discriminator
-                        if (invite.inviter.avatar)
-                            row.inviter_avatar = invite.inviter.avatar
-                        if (invite.inviter.bot)
-                            row.inviter_bot = invite.inviter.bot
-                    }
-                    invites.update(row, {url: row.url})
-                }
-            }).catch(function (err) {
-                invites.delete({
-                    url: row.url
-                })
-                invites_dead.insert_update(row)
-            })
-
+            _this.check_url(row)
         }
     }
 
-//----------------------------------------------------------------------------------------------------
-    LogUsersGuilds() {
-        this.calculating_members = 1
-        let guilds_size = this.client.guilds.size
-        this.client.guilds.forEach(function logMapElements(guild, guild_id) {
+    Log_users_guilds() {
+        _this.calculating_members = 1
+        let guilds_size = _this.client.guilds.size
+        _this.client.guilds.forEach(function logMapElements(guild, guild_id) {
             guild.fetchMembers().then(function (_guild) {
                 let result = {
                     guild_id: _guild.id,
@@ -230,15 +139,16 @@ class discord_heper {
                 if (guilds_size <= 0) {
                     _this.calculating_members = 0
                 }
+            }).catch(function (err) {
+                console.log(err)
             })
         })
     }
 
-//----------------------------------------------------------------------------------------------------
-    FindFriends() {
+    Find_friends() {
         let guilds = []
-        this.client.guilds.forEach(function logMapElements(guild, key) {
-            let _guild = _this.FindFriends_InVoice(guild)
+        _this.client.guilds.forEach(function logMapElements(guild, key) {
+            let _guild = _this.Find_friends_in_voice(guild)
             if (_guild)
                 guilds.push(_guild)
         })
@@ -255,7 +165,7 @@ class discord_heper {
         return false
     }
 
-    FindFriends_InVoice(guild) {
+    Find_friends_in_voice(guild) {
         let _guild = {
             id: guild.id,
             name: guild.name,
@@ -264,7 +174,7 @@ class discord_heper {
             channels: {}
         }
         let channels = {}
-        let friends = this.friends
+        let friends = _this.friends
         guild.channels.forEach(function logMapElements(channel, key) {
             if (channel.type !== 'voice')
                 return
