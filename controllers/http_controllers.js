@@ -37,14 +37,14 @@ class http_controllers {
     }
 
     qwe(request, response) {
+        /*
         discordHeper.test()
         const sleep = require('system-sleep')
         while (discordHeper.calculating_members)
             sleep(1000)
         console.log('Done')
-
+        */
         let guilds = 12312321
-
         response.render('qwe', {
             guilds: guilds
         })

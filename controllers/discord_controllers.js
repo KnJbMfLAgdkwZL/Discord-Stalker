@@ -1,4 +1,3 @@
-let friends_logs = new (require('../models/friends_logs'))
 let client
 let discord_heper
 
@@ -11,7 +10,7 @@ class discord_controllers {
         client = new discord.Client()
         this.client = client
         client.on('ready', this.ready)
-        //client.on('voiceStateUpdate', this.voiceStateUpdate)
+        client.on('voiceStateUpdate', this.voiceStateUpdate)
     }
 
     login() {
@@ -25,13 +24,9 @@ class discord_controllers {
     ready() {
         console.log(`Logged in as ${client.user.tag}`)
         console.log()
-
-
         //discord_heper.Search_guild_urls(client.guilds.get('475217337461506050'))
         //discord_heper.Search_all_urls()
         //discord_heper.Check_urls_in_db()
-
-
     }
 
     voiceStateUpdate(oldMember, newMember) {
@@ -39,7 +34,15 @@ class discord_controllers {
         let oldUserChannel = oldMember.voiceChannel
         let user_channel = false
         let member = false
-        let param = {}
+        let param = {
+            guild_name: null,
+            guild_id: null,
+            channel_name: null,
+            channel_id: null,
+            user_name: null,
+            user_id: null,
+            date_time: null
+        }
         if (oldUserChannel === undefined && newUserChannel !== undefined) {
             param.status = 'Join'
             user_channel = newUserChannel
@@ -50,15 +53,27 @@ class discord_controllers {
             user_channel = oldUserChannel
             member = oldMember
         }
+
         if (user_channel && member) {
-            param.guild_name = user_channel.guild.name
-            param.guild_id = user_channel.guild.id
-            param.channel_name = user_channel.name
-            param.channel_id = user_channel.id
-            param.user_name = member.user.username
-            param.user_id = member.user.id
+            if (user_channel.guild) {
+                if (user_channel.guild.name)
+                    param.guild_name = user_channel.guild.name
+                if (user_channel.guild.id)
+                    param.guild_id = user_channel.guild.id
+            }
+            if (user_channel.name)
+                param.channel_name = user_channel.name
+            if (user_channel.id)
+                param.channel_id = user_channel.id
+            if (member.user) {
+                if (member.user.username)
+                    param.user_name = member.user.username
+                if (member.user.id)
+                    param.user_id = member.user.id
+            }
             param.date_time = new Date().toString()
-            friends_logs.insert(param)
+
+            discord_heper.Friends_logs(param)
         }
     }
 }

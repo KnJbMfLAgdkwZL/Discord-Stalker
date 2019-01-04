@@ -4,6 +4,7 @@ let friends = new (require('../models/friends'))
 let invites = new (require('../models/invites'))
 let invites_dead = new (require('../models/invites_dead'))
 let guilds_check = new (require('../models/guilds_check'))
+let friends_logs = new (require('../models/friends_logs'))
 let _this
 
 class discord_heper {
@@ -17,12 +18,15 @@ class discord_heper {
             let v = tmp[k]
             _friends[v.id] = v
         }
-
         _this.friends = _friends
         _this.calculating_members = 0
     }
 
-//----------------------------------------------------------------------------------------------------
+    Friends_logs(param) {
+        if (_this.friends[param.user_id])
+            friends_logs.insert(param)
+    }
+
     Sort_guilds_from_db() {
         let data = guilds_check.select({}, {
             frieds_in_voise: 'DESC',
