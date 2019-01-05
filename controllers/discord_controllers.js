@@ -10,7 +10,7 @@ class discord_controllers {
         client = new discord.Client()
         this.client = client
         client.on('ready', this.ready)
-        client.on('voiceStateUpdate', this.voiceStateUpdate)
+        //client.on('voiceStateUpdate', this.voiceStateUpdate)
     }
 
     login() {
@@ -27,6 +27,9 @@ class discord_controllers {
         //discord_heper.Search_guild_urls(client.guilds.get('475217337461506050'))
         //discord_heper.Search_all_urls()
         //discord_heper.Check_urls_in_db()
+        //discord_heper.Log_dm_messages()
+
+
     }
 
     voiceStateUpdate(oldMember, newMember) {
