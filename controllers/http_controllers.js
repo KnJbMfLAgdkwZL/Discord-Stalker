@@ -21,8 +21,8 @@ class http_controllers {
         app.disable('view cache')
 
         app.get('/findfriends', this.findfriends)
-        app.get('/qwe', this.qwe)
-        app.get('/test', this.test)
+        app.get('/showdmchanels', this.showdmchanels)
+        app.get('/showdmchanel', this.showdmchanel)
 
         const port = 3000
         app.listen(port, (err) => {
@@ -33,25 +33,22 @@ class http_controllers {
 
     findfriends(request, response) {
         let guilds = discord_heper.Find_friends()
-        response.render('index', {guilds: guilds})
+        response.render('findfriends', {guilds: guilds})
     }
 
-    qwe(request, response) {
-        /*
-        discordHeper.test()
-        const sleep = require('system-sleep')
-        while (discordHeper.calculating_members)
-            sleep(1000)
-        console.log('Done')
-        */
-        let guilds = 12312321
-        response.render('qwe', {
-            guilds: guilds
+    showdmchanels(request, response) {
+        let chanels = discord_heper.Get_dm_chanels_from_db()
+        response.render('showdmchanels', {
+            chanels: chanels
         })
     }
 
-    test(request, response) {
-        response.render('test')
+    showdmchanel(request, response) {
+        let channel_id = request.query.channel_id
+        let messages = discord_heper.Get_dm_chanel_from_db(channel_id)
+        response.render('showdmchanel', {
+            messages: messages
+        })
     }
 }
 

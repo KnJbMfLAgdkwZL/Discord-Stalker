@@ -28,6 +28,8 @@ class discord_controllers {
         //discord_heper.Search_all_urls()
         //discord_heper.Check_urls_in_db()
         //discord_heper.Log_dm_messages()
+        //discord_heper.Get_dm_chanels_from_db()
+
 
 
     }

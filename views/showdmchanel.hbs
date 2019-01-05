@@ -1,0 +1,41 @@
+<div class="messages">
+    {{#each messages}}
+        <div class="message">
+
+            <div class="message_head">
+                <img class="user_avatar"
+                     src='https://cdn.discordapp.com/avatars/{{message_author_id}}/{{message_author_avatar}}.png?size=128'/>
+                <div class="message_head_title">{{message_author_username}} | {{message_createdTimestamp}}</div>
+            </div>
+
+
+            {{message_content}}
+
+            {{#each attachments}}
+                <a href="{{this}}" target="_blank">{{this}}</a>
+            {{/each}}
+
+            <hr/>
+
+
+        </div>
+    {{/each}}
+</div>
+
+<style>
+    .user_avatar {
+        height: 35px;
+        border-radius: 90px;
+    }
+
+    .message_head_title {
+        display: inline-block;
+        margin-top: 7px;
+        margin-left: 10px;
+        position: absolute;
+    }
+
+    .message_head {
+        margin-bottom: 5px;
+    }
+</style>

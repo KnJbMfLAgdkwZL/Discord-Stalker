@@ -10,6 +10,14 @@ class messages_dm extends model {
             this.insert(param)
         }
     }
+
+    select_group_by_channel_id() {
+        let sql = `SELECT * FROM ${this.table} GROUP BY channel_id`
+        let data = this.sqlite.run(sql)
+        if (data.length)
+            return data
+        return false
+    }
 }
 
 module.exports = messages_dm

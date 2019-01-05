@@ -155,74 +155,84 @@ class discord_heper {
         _this.client.channels.forEach(function (channel, channel_id) {
             if (channel.type == 'dm') {
                 function fetchMessages(messages) {
-                    let size = messages.size
-                    let lastMessageID = ''
-                    messages.forEach(function (message, message_id) {
-                        let data = {
-                            channel_id: '',
-                            channel_recipient_id: '',
-                            channel_recipient_username: '',
-                            message_id: '',
-                            message_content: '',
-                            message_author_id: '',
-                            message_author_username: '',
-                            message_author_discriminator: '',
-                            message_author_avatar: '',
-                            message_createdTimestamp: '',
-                            attachments: ''
-                        }
-                        if (channel) {
-                            if (channel.id)
-                                data.channel_id = channel.id
-                            if (channel.recipient) {
-                                if (channel.recipient.id)
-                                    data.channel_recipient_id = channel.recipient.id
-                                if (channel.recipient.username)
-                                    data.channel_recipient_username = channel.recipient.username
+                    try {
+                        let size = messages.size
+                        let lastMessageID = ''
+                        messages.forEach(function (message, message_id) {
+                            let data = {
+                                channel_id: '',
+                                channel_recipient_id: '',
+                                channel_recipient_username: '',
+                                message_id: '',
+                                message_content: '',
+                                message_author_id: '',
+                                message_author_username: '',
+                                message_author_discriminator: '',
+                                message_author_avatar: '',
+                                message_createdTimestamp: '',
+                                attachments: ''
                             }
-                        }
-                        if (message) {
-                            if (message.id)
-                                data.message_id = message.id
-                            if (message.content)
-                                data.message_content = message.content
-                            if (message.createdTimestamp) {
-                                let date = new Date();
-                                date.setTime(message.createdTimestamp)
-                                date = date.toLocaleString()
-                                data.message_createdTimestamp = date
+                            if (channel) {
+                                if (channel.id)
+                                    data.channel_id = channel.id
+                                if (channel.recipient) {
+                                    if (channel.recipient.id)
+                                        data.channel_recipient_id = channel.recipient.id
+                                    if (channel.recipient.username)
+                                        data.channel_recipient_username = channel.recipient.username
+                                }
                             }
-                            if (message.author) {
-                                if (message.author.id)
-                                    data.message_author_id = message.author.id
-                                if (message.author.username)
-                                    data.message_author_username = message.author.username
-                                if (message.author.discriminator)
-                                    data.message_author_discriminator = message.author.discriminator
-                                if (message.author.avatar)
-                                    data.message_author_avatar = message.author.avatar
+                            if (message) {
+                                if (message.id)
+                                    data.message_id = message.id
+                                if (message.content)
+                                    data.message_content = message.content
+                                if (message.createdTimestamp) {
+                                    let date = new Date();
+                                    date.setTime(message.createdTimestamp)
+                                    date = date.toLocaleString()
+                                    data.message_createdTimestamp = date
+                                }
+                                if (message.author) {
+                                    if (message.author.id)
+                                        data.message_author_id = message.author.id
+                                    if (message.author.username)
+                                        data.message_author_username = message.author.username
+                                    if (message.author.discriminator)
+                                        data.message_author_discriminator = message.author.discriminator
+                                    if (message.author.avatar)
+                                        data.message_author_avatar = message.author.avatar
+                                }
                             }
-                        }
-                        let attachments = ''
-                        message.attachments.forEach(function (attachment, attachment_id) {
-                            let str = ''
-                            if (attachment.url)
-                                str += attachment.url + '\n'
-                            else if (attachment.proxyURL)
-                                str += attachment.proxyURL + '\n'
-                            attachments += str
+                            let attachments = ''
+                            message.attachments.forEach(function (attachment, attachment_id) {
+                                let str = ''
+                                if (attachment.url)
+                                    str += attachment.url + '\n'
+                                else if (attachment.proxyURL)
+                                    str += attachment.proxyURL + '\n'
+                                attachments += str
+                            })
+                            data.attachments = attachments
+
+                            try {
+                                messages_dm.insert_if_not_found(data)
+                            }
+                            catch (err) {
+                                console.log(err)
+                            }
+                            size--
+                            if (!size)
+                                lastMessageID = message_id
                         })
-                        data.attachments = attachments
-                        messages_dm.insert_if_not_found(data)
-                        size--
-                        if (!size)
-                            lastMessageID = message_id
-                    })
-                    if (messages.size >= 100)
-                        channel.fetchMessages({
-                            limit: 100,
-                            before: lastMessageID
-                        }).then(fetchMessages).catch(console.error)
+                        if (messages.size >= 100)
+                            channel.fetchMessages({
+                                limit: 100,
+                                before: lastMessageID
+                            }).then(fetchMessages).catch(console.error)
+                    } catch (err) {
+                        console.log(err)
+                    }
                 }
 
                 channel.fetchMessages({
@@ -230,6 +240,25 @@ class discord_heper {
                 }).then(fetchMessages).catch(console.error)
             }
         })
+    }
+
+    Get_dm_chanels_from_db() {
+        let data = messages_dm.select_group_by_channel_id()
+        return data
+    }
+
+    Get_dm_chanel_from_db(channel_id) {
+        let data = messages_dm.select({channel_id: channel_id})
+        for (let k in data) {
+            let attachments = data[k].attachments.split('\n')
+            data[k].attachments = []
+            for (let a_k in attachments) {
+                if (attachments[a_k])
+                    data[k].attachments.push(attachments[a_k])
+            }
+        }
+        console.log(data)
+        return data
     }
 
     Find_friends() {

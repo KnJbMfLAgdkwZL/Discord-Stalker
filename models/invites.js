@@ -28,4 +28,3 @@ class invites extends model {
 }
 
 module.exports = invites
-
