@@ -250,14 +250,28 @@ class discord_heper {
     Get_dm_chanel_from_db(channel_id) {
         let data = messages_dm.select({channel_id: channel_id})
         for (let k in data) {
-            let attachments = data[k].attachments.split('\n')
-            data[k].attachments = []
+            let val = data[k]
+            let attachments = val.attachments.split('\n')
+            val.attachments = {}
             for (let a_k in attachments) {
-                if (attachments[a_k])
-                    data[k].attachments.push(attachments[a_k])
+                let val_a = attachments[a_k]
+                let arr = val_a.split('.')
+                let type = arr[arr.length - 1]
+                if (type == 'png' || type == 'jpg' || type == 'gif' ||
+                    type == 'PNG' || type == 'JPG' || type == 'GIF'
+                ) {
+                    if (!val.attachments.img)
+                        val.attachments.img = []
+                    val.attachments.img.push(val_a)
+                }
+                else {
+                    if (!val.attachments.others)
+                        val.attachments.others = []
+                    val.attachments.others.push(val_a)
+                }
             }
         }
-        console.log(data)
+        //console.log(data)
         return data
     }
 
@@ -324,4 +338,5 @@ class discord_heper {
     }
 }
 
-module.exports = discord_heper
+module
+    .exports = discord_heper
