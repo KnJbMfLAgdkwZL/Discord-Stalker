@@ -24,12 +24,11 @@ class discord_controllers {
     ready() {
         console.log(`Logged in as ${client.user.tag}`)
         console.log()
-        //discord_heper.Search_guild_urls(client.guilds.get('475217337461506050'))
-        //discord_heper.Search_all_urls()
-        //discord_heper.Check_urls_in_db()
-        //discord_heper.Log_dm_messages()
-        //discord_heper.Get_dm_chanels_from_db()
 
+        //discord_heper.start_join()
+        //discord_heper.Log_users_guilds()
+        //discord_heper.Search_all_urls01bad()
+        //discord_heper.get_users_from_all_guilds()
 
 
     }

@@ -25,6 +25,16 @@ class invites extends model {
         else
             this.insert(param)
     }
+
+    get_invites_for_join() {
+        let sql = 'SELECT invites.* FROM invites LEFT JOIN guilds_checked ON (guilds_checked.id = invites.guild_id) WHERE guilds_checked.id IS NULL GROUP BY invites.guild_id'
+        let data = this.sqlite.run(sql)
+        if (data.length)
+            return data
+        return false
+
+    }
+
 }
 
 module.exports = invites

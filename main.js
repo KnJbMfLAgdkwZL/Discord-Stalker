@@ -5,5 +5,6 @@ let discord_heper = new (require('./components/discord_heper'))(discord_controll
 discord_controllers.set_helper(discord_heper)
 discord_controllers.login()
 
-let http_controllers = new (require('./controllers/http_controllers'))(discord_heper)
+//let http_controllers = new (require('./controllers/http_controllers'))(discord_heper)
+
 

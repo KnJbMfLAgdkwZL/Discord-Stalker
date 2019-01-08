@@ -111,6 +111,14 @@ class discord_api {
         return JSON.parse(response.body)
     }
 
+    LeaveGuild(guild_id) {
+        let baseURL = 'https://discordapp.com/api/v6/users/@me/guilds/' + guild_id
+        let headers = {
+            'Authorization': this.token
+        }
+        let response = request('DELETE', baseURL, {headers: headers})
+    }
+
     ListGuildMembers(guild_id) {
         let baseURL = 'https://discordapp.com/api/v6/guilds/' + guild_id + '/members?limit=1000'
         let headers = {
@@ -131,6 +139,7 @@ class discord_api {
         let response = request('PATCH', baseURL, {headers: headers, json: data})
         return JSON.parse(response.body)
     }
+
 
 }
 
