@@ -1,0 +1,151 @@
+<div class="guilds">
+    {{#each guilds}}
+        <div class="guild">
+
+            <div class="guild_head">
+                <img class="head_ico" src='https://cdn.discordapp.com/icons/{{id}}/{{icon}}.webp'/>
+
+                <div class="guild_head_title">
+                    <div class="guild_name">{{name}}</div>
+                    <div class="guild_id">{{id}}</div>
+                </div>
+
+            </div>
+
+            {{#each channels}}
+                <div class="guild_chanel">
+                    <div class="chanel_head">
+                        <div class="chanel_name">{{channel_name}} </div>
+                        |
+                        <div class="chanel_id"> {{channel_id}}</div>
+                    </div>
+
+                    {{#each users}}
+
+                        <div class="chanel_user friend_{{friend}}">
+
+                            {{#if avatar}}
+                                <img class="user_avatar"
+                                     src='https://cdn.discordapp.com/avatars/{{user_id}}/{{avatar}}.png?size=128'/>
+                            {{else}}
+                                <div class="user_avatar no_avatar"></div>
+                            {{/if}}
+
+                            <div class="user_title_wraper">
+                                {{#if nickname}}
+                                    <div class="user_nickname">{{nickname}}</div>
+                                {{/if}}
+                                <div class="user_username">{{#if bot}}[BOT]{{/if}}{{username}}
+                                    <div class="discriminator">#{{discriminator}}</div>
+                                </div>
+                                <div class="user_id">{{user_id}}</div>
+                            </div>
+
+                        </div>
+
+                    {{/each}}
+
+                </div>
+
+            {{/each}}
+
+            <hr/>
+
+        </div>
+    {{/each}}
+</div>
+
+<style>
+    .guilds {
+        font-size: 15px;
+    }
+
+    img.head_ico {
+        height: 40px;
+        border-radius: 5px;
+    }
+
+    .guild_head_title {
+        display: inline-block;
+        position: absolute;
+        margin-left: 5px;
+        font-size: 17px;
+    }
+
+    .guild_name {
+        font-weight: bold;
+    }
+
+    .guild_id {
+        font-style: italic;
+    }
+
+    .guild_chanel {
+        margin-bottom: 5px;
+    }
+
+    .chanel_head {
+        margin-bottom: 3px;
+    }
+
+    .chanel_name {
+        display: inline-block;
+        /*font-size: 16px;*/
+        font-weight: bold;
+    }
+
+    .chanel_id {
+        display: inline-block;
+        font-style: italic;
+    }
+
+    .user_nickname {
+        color: gray;
+        display: inline-block;
+    }
+
+    .user_username {
+        display: inline-block;
+    }
+
+    img.user_avatar {
+        height: 35px;
+        border-radius: 90px;
+    }
+
+    .no_avatar {
+        display: inline-block;
+        width: 35px;
+        height: 35px;
+        background: gray;
+        border-radius: 90px;
+    }
+
+    .user_title_wraper {
+        display: inline-block;
+        position: absolute;
+        margin-left: 5px;
+        margin-top: 2px;
+    }
+
+    .user_id {
+        font-style: italic;
+        font-size: 14px;
+    }
+
+    .chanel_user {
+        margin-bottom: 1px;
+        margin-left: 5px;
+        font-size: 14px;
+    }
+
+    .friend_true {
+        background: #EAEAEA;
+    }
+
+    .discriminator {
+        display: inline-block;
+        color: gray;
+    }
+
+</style>

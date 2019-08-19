@@ -1,0 +1,28 @@
+<div class="chanels">
+    {{#each chanels}}
+        <div class="chanel">
+            <a class="chanel_a" href="/showdmchanel?channel_id={{channel_id}}">
+                {{channel_recipient_username}}
+            </a>
+        </div>
+    {{/each}}
+</div>
+
+<style>
+    .chanel {
+        margin-bottom: 5px;
+    }
+
+    img.user_avatar {
+        height: 35px;
+        border-radius: 90px;
+    }
+
+    .no_avatar {
+        display: inline-block;
+        width: 35px;
+        height: 35px;
+        background: gray;
+        border-radius: 90px;
+    }
+</style>
