@@ -27,7 +27,10 @@ class http_controllers {
         const port = 3000
         app.listen(port, (err) => {
             if (err) return console.log('something bad happened', err)
-            console.log(`server is listening on ${port}`)
+
+            console.log(`http server is listening on 3000`);
+            console.log(`\thttp://localhost:${port}/findfriends`);
+            console.log(`\thttp://localhost:${port}/showdmchanels`);
         })
     }
 

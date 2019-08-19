@@ -8,3 +8,4 @@ npm install express
 
 npm install express-handlebars
 
+npm install better-sqlite3

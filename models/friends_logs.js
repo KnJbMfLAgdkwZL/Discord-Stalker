@@ -1,6 +1,6 @@
-const model = require('../app_core/model.js')
+const model = require('../app_core/model.js');
 
 class friends_logs extends model {
 }
 
-module.exports = friends_logs
+module.exports = friends_logs;

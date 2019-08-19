@@ -1,62 +1,83 @@
 class model {
     constructor() {
-        this.sqlite = require('sqlite-sync')
-        if (!this.sqlite.db)
-            this.sqlite.connect('../main.db')
+        this.sqlite = require('better-sqlite3');
+        if (!this.sqlite.db) {
+            let path = `${__dirname}/../main.db`;
+            this.sqlite = new this.sqlite(path);
+        }
         this.order = {
             ASC: 'ASC',
             DESC: 'DESC'
-        }
-        this.table = this.constructor.name
+        };
+        this.table = this.constructor.name;
     }
 
-    set_table(name) {
-        this.table = name
+    close() {
+        //this.sqlite.close();
     }
 
     delete(condition) {
-        this.sqlite.delete(this.table, condition)
+        this.sqlite.delete(this.table, condition);
+        this.close();
     }
 
     insert(param) {
-        this.sqlite.insert(this.table, param)
+        let condition = ``;
+        let keys = Object.keys(param);
+        for (let k in keys) {
+            keys[k] = `:${keys[k]}`
+        }
+        let str = keys.join(', ');
+        let sql = `INSERT INTO ${this.table} VALUES (${str})`;
+        let stmt = this.sqlite.prepare(sql);
+        stmt.run(param);
     }
 
     update(param, condition) {
-        this.sqlite.update(this.table, param, condition)
+        this.sqlite.update(this.table, param, condition);
+        this.close();
+    }
+
+    sql(sql) {
+        var data = this.sqlite.prepare(sql).all();
+        if (data.length)
+            return data;
+        this.close();
+        return false;
     }
 
     select(param, order_by) {
-        let _param = {}
-        let condition = `WHERE 1`
+        let _param = {};
+        let condition = `WHERE 1`;
         if (param) {
             for (let k in param) {
-                condition += ` AND ${k} = :${k}`
-                _param[`:${k}`] = param[k]
+                condition += ` AND ${k} = :p_${k}`;
+                _param[`p_${k}`] = param[k];
             }
         }
-        let order = ``
+        let order = ``;
         if (order_by) {
-            let keys = Object.keys(order_by)
-            let last = ``
+            let keys = Object.keys(order_by);
+            let last = ``;
             if (keys.length) {
-                last = keys[keys.length - 1]
-                order = `ORDER BY `
+                last = keys[keys.length - 1];
+                order = `ORDER BY `;
             }
             for (let k in order_by) {
-                let val = order_by[k]
-                let str = `${k} ${val}`
-                order += str
+                let val = order_by[k];
+                let str = `${k} ${val}`;
+                order += str;
                 if (k != last)
-                    order += `, `
+                    order += `, `;
             }
         }
-        let sql = `SELECT * FROM ${this.table} ${condition} ${order}`
-        let data = this.sqlite.run(sql, _param)
+        let sql = `SELECT * FROM ${this.table} ${condition} ${order}`;
+        var data = this.sqlite.prepare(sql).all(_param);
         if (data.length)
-            return data
-        return false
+            return data;
+        this.close();
+        return false;
     }
 }
 
-module.exports = model
+module.exports = model;
