@@ -13,7 +13,7 @@ class discord_controllers {
     }
 
     login() {
-        client.login(this.token);
+        //client.login(this.token);
     }
 
     ready() {
