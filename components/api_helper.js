@@ -44,4 +44,4 @@ class api_helper {
     }
 }
 
-module.exports = api_helper
+module.exports = new api_helper();

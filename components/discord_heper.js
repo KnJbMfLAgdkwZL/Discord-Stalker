@@ -1,4 +1,3 @@
-const api_helper = require('./api_helper');
 let friends = new (require('../models/friends'));
 let invites = new (require('../models/invites'));
 let invites_dead = new (require('../models/invites_dead'));
@@ -12,21 +11,28 @@ let guilds_rus = new (require('../models/guilds_rus'));
 let _this;
 
 class discord_heper {
-    constructor(client) {
+    constructor() {
         _this = this;
-        _this.client = client;
-        let tmp = friends.select();
+        _this.calculating_members = 0;
+    }
+
+    friends_select() {
+        return friends.select();
+    }
+
+    friends_obj() {
+        let tmp = _this.friends_select();
         let _friends = {};
         for (let k in tmp) {
             let v = tmp[k];
             _friends[v.id] = v;
         }
-        _this.friends = _friends;
-        _this.calculating_members = 0;
+        return _friends;
     }
 
     Friends_logs(param) {
-        if (_this.friends[param.user_id])
+        let friends = _this.friends_obj();
+        if (friends[param.user_id])
             friends_logs.insert(param);
     }
 
@@ -200,13 +206,13 @@ class discord_heper {
         function isRus(guild) {
             if (guild.region == 'russia')
                 return true;
-
             let regexp = /[а-яё]/i;
             if (regexp.test(guild.name))
                 return true;
-
             return false;
         }
+
+        let friends = _this.friends_obj();
 
         _this.calculating_members = 1;
         let guilds_size = _this.client.guilds.size;
@@ -221,14 +227,14 @@ class discord_heper {
                     frieds_in_voise: 0
                 };
                 result.users_on_server = _guild.members.size;
-                for (let key in _this.friends)
+                for (let key in friends)
                     if (guild.members.get(key)) ;
                 result.frieds_on_server++;
                 _guild.channels.forEach(function logMapElements(channel, channel_id) {
                     if (channel.type !== 'voice')
                         return;
                     result.users_in_voise += channel.members.size
-                    for (let key in _this.friends)
+                    for (let key in friends)
                         if (channel.members.get(key))
                             result.frieds_in_voise++;
                 });
@@ -376,6 +382,7 @@ class discord_heper {
 
     Find_friends() {
         let guilds = [];
+
         _this.client.guilds.forEach(function logMapElements(guild, key) {
             let _guild = _this.Find_friends_in_voice(guild);
             if (_guild)
@@ -403,7 +410,7 @@ class discord_heper {
             channels: {}
         };
         let channels = {};
-        let friends = _this.friends;
+        let friends = _this.friends_obj();
         guild.channels.forEach(function logMapElements(channel, key) {
             if (channel.type !== 'voice')
                 return;
@@ -463,6 +470,8 @@ class discord_heper {
     }
 
     get_users_from_all_guilds() {
+        let friends = _this.friends_obj();
+
         let size = _this.client.guilds.size;
         _this.client.guilds.forEach(function (guild, guild_id) {
             guild.fetchMembers().then(function (_guild) {
@@ -474,7 +483,7 @@ class discord_heper {
                         };
                         guilds_users.insert_01(param);
                     });*/
-                    for (let key in _this.friends)
+                    for (let key in friends)
                         if (guild.members.get(key)) {
                             let param = {
                                 guild_id: guild_id,
@@ -496,4 +505,4 @@ class discord_heper {
 
 }
 
-module.exports = discord_heper;
+module.exports = new discord_heper();

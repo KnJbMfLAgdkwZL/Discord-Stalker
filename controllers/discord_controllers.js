@@ -1,5 +1,4 @@
 let client;
-let discord_heper;
 
 class discord_controllers {
     constructor() {
@@ -17,13 +16,12 @@ class discord_controllers {
         client.login(this.token);
     }
 
-    set_helper(heper) {
-        discord_heper = heper;
-    }
-
     ready() {
+        require('../global').discord_heper.client = client;
         console.log(`Logged in as ${client.user.tag}`);
         console.log();
+
+        //let discord_heper = require('../global').discord_heper;
         //discord_heper.start_join();
         //discord_heper.Log_users_guilds();
         //discord_heper.Search_all_urls01bad();
@@ -71,10 +69,10 @@ class discord_controllers {
                     param.user_id = member.user.id;
             }
             param.date_time = new Date().toString();
+            require('../global').discord_heper.Friends_logs(param);
 
-            discord_heper.Friends_logs(param);
         }
     }
 }
 
-module.exports = discord_controllers;
+module.exports = new discord_controllers();
