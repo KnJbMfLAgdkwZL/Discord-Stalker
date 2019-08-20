@@ -1,8 +1,71 @@
-<div class="friends">
-    {{#each friends}}
-        <div class="friend">
-            {{id}}
-            {{name}}
-        </div>
-    {{/each}}
+<div class="editfriends">
+    <div class="addfriend">
+        <form method="POST" action="/addfriend" id="addfriendform">
+            <input type="text" name="id" placeholder="ID*"/>
+            <input type="text" name="name" placeholder="Name"/>
+            <input type="submit" id="btnadd" value="Добавить"/>
+        </form>
+    </div>
+
+    <div class="friends">
+        {{#each friends}}
+            <div class="friend">
+                <div class="id">
+                    <a href="/friendinfo?id={{id}}" class="id_a">
+                        {{id}}
+                    </a>
+                </div>
+                <div class="name">{{name}}</div>
+                <div class="controls"><a href="./deletefriend?id={{id}}">del</a></div>
+            </div>
+        {{/each}}
+    </div>
 </div>
+
+<style>
+    .id_a {
+        color: black;
+        text-decoration: none;
+    }
+    #addfriendform {
+        padding: 5px 0px;
+    }
+    input[name="id"] {
+        width: 208px;
+    }
+    input[name="name"] {
+        width: 208px;
+    }
+    #btnadd {
+        width: 112px;
+    }
+    .friends {
+    }
+    .friend {
+        padding: 1px 0px;
+    }
+    .id {
+        display: inline-block;
+        width: 200px;
+        background: lightblue;
+        padding: 0px 5px;
+        margin: 0px;
+        border: 1px solid gray;
+    }
+    .name {
+        display: inline-block;
+        width: 200px;
+        background: lightgray;
+        padding: 0px 5px;
+        margin: 0px;
+        border: 1px solid gray;
+    }
+    .controls {
+        display: inline-block;
+        width: 100px;
+        background: antiquewhite;
+        padding: 0px 5px;
+        margin: 0px;
+        border: 1px solid gray;
+    }
+</style>

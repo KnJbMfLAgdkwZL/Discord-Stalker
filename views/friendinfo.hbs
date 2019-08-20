@@ -1,0 +1,44 @@
+<div class="userProfile">
+
+    <div class="userProfile_user">
+        <img class="avatarURL" src="{{userProfile.user.avatarURL}}"/>
+        <div>ID: {{userProfile.user.id}}</div>
+        <div>Tag: {{userProfile.user.tag}}</div>
+        <div>CreatedAt: {{userProfile.user.createdAt}}</div>
+    </div>
+
+
+    <div class="userProfile_mutualGuilds">
+        <div>Mutual Guilds: </div>
+        {{#each userProfile.mutualGuilds}}
+            <div class="guild">
+                <img class="mutualGuilds_iconURL" src="{{iconURL}}"/>
+                <div class="guild_id">id: {{id}}</div>
+                <div class="guild_name">name: {{name}}</div>
+                <div class="guild_memberCount">memberCount: {{memberCount}}</div>
+            </div>
+        {{/each}}
+    </div>
+
+
+</div>
+
+<style>
+    .guild {
+    }
+    .guild_id {
+        display: inline-block;
+    }
+    .guild_name {
+        display: inline-block;
+    }
+    .guild_memberCount {
+        display: inline-block;
+    }
+    .avatarURL {
+        width: 250px;
+    }
+    .mutualGuilds_iconURL {
+        width: 50px;
+    }
+</style>

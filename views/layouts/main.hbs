@@ -6,17 +6,30 @@
 </head>
 <body>
     <div id="header">
-        <a href="./editfriends">Edit Friends</a>
+        <a href="/findfriends">Find Friends</a>
+        |
+        <a href="/editfriends">Edit Friends</a>
     </div>
 
-    {{{body}}}
+    <div id="body">
+        {{{body}}}
+    <div>
 
     <style>
+        * {
+            padding: 0px;
+            margin: 0px;
+        }
+        #body
+        {
+            padding: 5px;
+            margin: 5px;
+        }
         #header
         {
-            border-bottom: 1px solid black;
-            margin: 5px 0px;
             padding: 5px;
+            margin: 5px 0px;
+            border-bottom: 1px solid black;
         }
     </style>
 

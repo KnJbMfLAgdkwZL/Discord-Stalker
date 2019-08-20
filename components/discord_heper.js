@@ -503,6 +503,16 @@ class discord_heper {
         });
     }
 
+    addfriend(id, name) {
+        friends.insert({
+            id: id,
+            name: name
+        });
+    }
+
+    deletefriend(id) {
+        friends.delete({id: id});
+    }
 }
 
 module.exports = new discord_heper();

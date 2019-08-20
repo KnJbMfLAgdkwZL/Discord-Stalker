@@ -22,14 +22,18 @@
 
                     {{#each users}}
 
+
+
                         <div class="chanel_user friend_{{friend}}">
 
-                            {{#if avatar}}
-                                <img class="user_avatar"
-                                     src='https://cdn.discordapp.com/avatars/{{user_id}}/{{avatar}}.png?size=128'/>
-                            {{else}}
-                                <div class="user_avatar no_avatar"></div>
-                            {{/if}}
+                            <a href="/friendinfo?id={{user_id}}" class="id_a">
+                                {{#if avatar}}
+                                    <img class="user_avatar"
+                                         src='https://cdn.discordapp.com/avatars/{{user_id}}/{{avatar}}.png?size=128'/>
+                                {{else}}
+                                    <div class="user_avatar no_avatar"></div>
+                                {{/if}}
+                            </a>
 
                             <div class="user_title_wraper">
                                 {{#if nickname}}
@@ -90,7 +94,6 @@
 
     .chanel_name {
         display: inline-block;
-        /*font-size: 16px;*/
         font-weight: bold;
     }
 

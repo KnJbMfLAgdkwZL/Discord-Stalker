@@ -16,13 +16,21 @@ class model {
         //this.sqlite.close();
     }
 
-    delete(condition) {
-        this.sqlite.delete(this.table, condition);
-        this.close();
+    delete(param) {
+        let _param = {};
+        let condition = `WHERE 1`;
+        if (param) {
+            for (let k in param) {
+                condition += ` AND ${k} = :p_${k}`;
+                _param[`p_${k}`] = param[k];
+            }
+        }
+        let sql = `DELETE FROM ${this.table} ${condition}`;
+        let stmt = this.sqlite.prepare(sql);
+        stmt.run(_param);
     }
 
     insert(param) {
-        let condition = ``;
         let keys = Object.keys(param);
         for (let k in keys) {
             keys[k] = `:${keys[k]}`
