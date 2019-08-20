@@ -443,19 +443,19 @@ class discord_heper {
         return false;
     }
 
-    start_join() {
-        function Acceptinvites(url) {
-            let code = url.replace('https://discord.gg/', '');
-            let res = discord_api.AcceptInvite(code);
-            if (res.code != '10006' && res.message != 'Unknown Invite') {
-                console.log(url);
-                console.log(res);
-                console.log();
-            } else {
-                console.log(res);
-            }
+    Acceptinvites(url) {
+        let code = url.replace('https://discord.gg/', '');
+        let res = require('../global').discord_api.AcceptInvite(code);
+        if (res.code != '10006' && res.message != 'Unknown Invite') {
+            console.log(url);
+            console.log(res);
+            console.log();
+        } else {
+            console.log(res);
         }
+    }
 
+    start_join() {
         let data = invites.get_invites_for_join();
         console.log(data.length);
         let i = 0;

@@ -7,19 +7,19 @@
         <div>CreatedAt: {{userProfile.user.createdAt}}</div>
     </div>
 
-
     <div class="userProfile_mutualGuilds">
+        <br/>
         <div>Mutual Guilds: </div>
+        <br/>
         {{#each userProfile.mutualGuilds}}
             <div class="guild">
                 <img class="mutualGuilds_iconURL" src="{{iconURL}}"/>
-                <div class="guild_id">id: {{id}}</div>
-                <div class="guild_name">name: {{name}}</div>
-                <div class="guild_memberCount">memberCount: {{memberCount}}</div>
+                <div class="guild_id">ID: {{id}}</div> |
+                <div class="guild_name">Name: {{name}}</div> |
+                <div class="guild_memberCount">Member Count: {{memberCount}}</div>
             </div>
         {{/each}}
     </div>
-
 
 </div>
 

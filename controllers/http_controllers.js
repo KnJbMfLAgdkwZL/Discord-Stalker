@@ -24,8 +24,16 @@ class http_controllers {
         app.get('/editfriends', this.editfriends);
         app.get('/deletefriend', this.deletefriend);
         app.get('/friendinfo', this.friendinfo);
+        app.get('/guilds', this.guilds);
+        app.get('/guild_leave', this.guild_leave);
+        app.get('/botsettings', this.botsettings);
+        app.get('/botstatus', this.botstatus);
+        app.get('/', this.home);
+        app.get('/', this.home);
 
         app.post('/addfriend', this.addfriend);
+        app.post('/guild_add', this.guild_add);
+        app.post('/status_edit', this.status_edit);
 
         const port = 3000;
         app.listen(port, (err) => {
@@ -34,6 +42,62 @@ class http_controllers {
             console.log(`\thttp://localhost:${port}/findfriends`);
             console.log(`\thttp://localhost:${port}/showdmchanels`);
         });
+    }
+
+    home(request, response) {
+        response.render('home');
+    }
+
+    botstatus(request, response) {
+        let clientUser = require('../global').discord_controllers.client.user;
+        let status = clientUser.settings.status;
+        response.send(status);
+    }
+
+    status_edit(request, response) {
+        let status = `${request.body.status}`;
+        let clientUser = require('../global').discord_controllers.client.user;
+        clientUser.setStatus(status).then(value => {
+            response.redirect('./botsettings');
+            response.end();
+        }).catch(reason => {
+            console.log(reason);
+        });
+    }
+
+    botsettings(request, response) {
+        let clientUser = require('../global').discord_controllers.client.user;
+        let status = clientUser.settings.status;
+        response.render('botsettings', {status: status});
+    }
+
+    guild_add(request, response) {
+        let global = require('../global');
+        global.discord_heper.Acceptinvites(`${request.body.url}`)
+        global.discord_controllers.client.fetchInvite(`${request.body.url}`).then(invite => {
+            response.redirect('./guilds');
+            response.end();
+        }).catch(reason => {
+            response.render('guild_add_erroe', {reason: reason});
+        });
+    }
+
+    guild_leave(request, response) {
+        let guild = require('../global').discord_controllers.client.guilds.get(`${request.query.id}`);
+        guild.leave().then(v => {
+            response.redirect('./guilds');
+            response.end();
+        });
+    }
+
+    guilds(request, response) {
+        let client = require('../global').discord_controllers.client;
+        client.syncGuilds(client.guilds);
+        let arr = [];
+        require('../global').discord_controllers.client.guilds.forEach(v => {
+            arr.push(v);
+        });
+        response.render('guilds', {guilds: arr});
     }
 
     friendinfo(request, response) {
@@ -47,9 +111,6 @@ class http_controllers {
                 response.render('friendinfo', {userProfile: userProfile});
             });
         });
-
-        //console.log(user);
-        //user.fetchProfile().then(console.log)
     }
 
     deletefriend(request, response) {
@@ -90,4 +151,5 @@ class http_controllers {
     }
 }
 
-module.exports = new http_controllers();
+module
+    .exports = new http_controllers();

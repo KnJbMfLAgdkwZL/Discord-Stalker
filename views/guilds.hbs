@@ -1,0 +1,49 @@
+<div class="guilds_edit">
+
+    <div class="guild_add">
+        <form method="POST" action="/guild_add" id="guild_add">
+            <input type="text" name="url" placeholder="url*"/>
+            <input type="submit" id="btnadd" value="Добавить"/>
+        </form>
+    </div>
+
+    <div class="guilds">
+        {{#each guilds}}
+            <div class="guild">
+                <img class="guild_iconURL" src="{{iconURL}}" alt=" "/>
+                <!--    <div class="guild_id">{{id}}</div>  -->
+                <div class="guild_name">{{name}}</div>
+                <div class="guild_controls">
+                    <a href="/guild_leave?id={{id}}">
+                        Leave
+                    <a>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+
+</div>
+
+<style>
+    .guild_add {
+        margin-bottom: 10px;
+    }
+    .guild_iconURL {
+        display: inline-block;
+        height: 40px;
+        width: 40px;
+        border: 1px solid black;
+    }
+    .guild_id {
+        display: inline-block;
+    }
+    .guild_name {
+        display: inline-block;
+    }
+    .guild_memberCount {
+        display: inline-block;
+    }
+    .guild_controls {
+        display: inline-block;
+    }
+</style>
