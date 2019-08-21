@@ -4,7 +4,6 @@
 
             <div class="guild_head">
                 <img class="head_ico" src='https://cdn.discordapp.com/icons/{{id}}/{{icon}}.webp'/>
-
                 <div class="guild_head_title">
                     <div class="guild_name">{{name}}</div>
                     <div class="guild_id">{{id}}</div>
@@ -19,20 +18,16 @@
                         |
                         <div class="chanel_id"> {{channel_id}}</div>
                     </div>
-
                     {{#each users}}
-
-
-
                         <div class="chanel_user friend_{{friend}}">
 
                             <a href="/friend_info?id={{user_id}}" class="id_a">
-                                {{#if avatar}}
-                                    <img class="user_avatar"
-                                         src='https://cdn.discordapp.com/avatars/{{user_id}}/{{avatar}}.png?size=128'/>
-                                {{else}}
-                                    <div class="user_avatar no_avatar"></div>
-                                {{/if}}
+                            {{#if avatar}}
+                                <img class="user_avatar"
+                                     src='https://cdn.discordapp.com/avatars/{{user_id}}/{{avatar}}.png?size=128'/>
+                            {{else}}
+                                <div class="user_avatar no_avatar"></div>
+                            {{/if}}
                             </a>
 
                             <div class="user_title_wraper">

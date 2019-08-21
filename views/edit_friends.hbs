@@ -7,65 +7,101 @@
         </form>
     </div>
 
+    <div id="friends_count">
+        Friends count: {{friends.length}}
+    </div>
+
     <div class="friends">
-        {{#each friends}}
-            <div class="friend">
-                <div class="id">
-                    <a href="/friend_info?id={{id}}" class="id_a">
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th></th>
+            </tr>
+            {{#each friends}}
+                <tr class="friend">
+                    <td class="id">
+                        <a href="/friend_info?id={{id}}" class="id_a">
                         {{id}}
-                    </a>
-                </div>
-                <div class="name">{{name}}</div>
-                <div class="controls"><a href="./delete_friend?id={{id}}">del</a></div>
-            </div>
-        {{/each}}
+                        </a>
+                    </td>
+                    <td class="name">{{name}}</td>
+                    <td class="controls">
+                        <a href="./delete_friend?id={{id}}">
+                        del
+                        </a>
+                    </td>
+                </tr>
+            {{/each}}
+        </table>
+
     </div>
 </div>
 
+<script>
+    const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+    const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
+                    v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+    )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+    document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+        const table = th.closest('table');
+        Array.from(table.querySelectorAll('tr:nth-child(n+2)'))
+                .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+                .forEach(tr => table.appendChild(tr));
+    })));
+</script>
+
 <style>
+    th {
+        cursor: pointer;
+    }
+
+    .friends > table {
+        border: 1px solid white;
+    }
+
+    td {
+        border: 1px solid gray;
+        padding: 1px 5px;
+    }
+
     .id_a {
         color: black;
         text-decoration: none;
     }
+
+    .btnsort {
+        width: 212px;
+    }
+
     #addfriendform {
         padding: 5px 0px;
     }
+
     input[name="id"] {
         width: 208px;
     }
+
     input[name="name"] {
         width: 208px;
     }
+
     #btnadd {
         width: 112px;
     }
-    .friends {
-    }
-    .friend {
-        padding: 1px 0px;
-    }
+
     .id {
-        display: inline-block;
         width: 200px;
         background: lightblue;
-        padding: 0px 5px;
-        margin: 0px;
-        border: 1px solid gray;
     }
+
     .name {
-        display: inline-block;
         width: 200px;
         background: lightgray;
-        padding: 0px 5px;
-        margin: 0px;
-        border: 1px solid gray;
     }
+
     .controls {
-        display: inline-block;
         width: 100px;
         background: antiquewhite;
-        padding: 0px 5px;
-        margin: 0px;
-        border: 1px solid gray;
     }
 </style>
