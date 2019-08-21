@@ -7,9 +7,9 @@ class http_controllers {
             extended: true
         }));
         app.use(express.json());
-        const exphbs = require('express-handlebars');
+        const handlebars = require('express-handlebars');
         const path = require('path');
-        app.engine('.hbs', exphbs({
+        app.engine('.hbs', handlebars({
             defaultLayout: 'main',
             extname: '.hbs',
             layoutsDir: path.join(__dirname, '../views/layouts')
@@ -18,20 +18,20 @@ class http_controllers {
         app.set('views', path.join(__dirname, '../views'));
         app.disable('view cache');
 
-        app.get('/findfriends', this.findfriends);
-        app.get('/showdmchanels', this.showdmchanels);
-        app.get('/showdmchanel', this.showdmchanel);
-        app.get('/editfriends', this.editfriends);
-        app.get('/deletefriend', this.deletefriend);
-        app.get('/friendinfo', this.friendinfo);
+        app.get('/find_friends', http_controllers.find_friends);
+        app.get('/show_dm_channels', http_controllers.show_dm_channels);
+        app.get('/show_dm_channel', http_controllers.show_dm_channel);
+        app.get('/edit_friends', http_controllers.edit_friends);
+        app.get('/delete_friend', http_controllers.delete_friend);
+        app.get('/friend_info', this.friend_info);
         app.get('/guilds', this.guilds);
         app.get('/guild_leave', this.guild_leave);
-        app.get('/botsettings', this.botsettings);
-        app.get('/botstatus', this.botstatus);
-        app.get('/', this.home);
-        app.get('/', this.home);
+        app.get('/bot_settings', http_controllers.bot_settings);
+        app.get('/bot_status', http_controllers.bot_status);
+        app.get('/', http_controllers.home);
+        app.get('/', http_controllers.home);
 
-        app.post('/addfriend', this.addfriend);
+        app.post('/add_friend', http_controllers.add_friend);
         app.post('/guild_add', this.guild_add);
         app.post('/status_edit', this.status_edit);
 
@@ -39,16 +39,15 @@ class http_controllers {
         app.listen(port, (err) => {
             if (err) return console.log('something bad happened', err);
             console.log(`http server is listening on 3000`);
-            console.log(`\thttp://localhost:${port}/findfriends`);
-            console.log(`\thttp://localhost:${port}/showdmchanels`);
+            console.log(`    http://localhost:${port}/`);
         });
     }
 
-    home(request, response) {
+    static home(request, response) {
         response.render('home');
     }
 
-    botstatus(request, response) {
+    static bot_status(request, response) {
         let clientUser = require('../global').discord_controllers.client.user;
         let status = clientUser.settings.status;
         response.send(status);
@@ -57,34 +56,34 @@ class http_controllers {
     status_edit(request, response) {
         let status = `${request.body.status}`;
         let clientUser = require('../global').discord_controllers.client.user;
-        clientUser.setStatus(status).then(value => {
-            response.redirect('./botsettings');
+        clientUser.setStatus(status).then(() => {
+            response.redirect('./bot_settings');
             response.end();
         }).catch(reason => {
             console.log(reason);
         });
     }
 
-    botsettings(request, response) {
+    static bot_settings(request, response) {
         let clientUser = require('../global').discord_controllers.client.user;
         let status = clientUser.settings.status;
-        response.render('botsettings', {status: status});
+        response.render('bot_settings', {status: status});
     }
 
     guild_add(request, response) {
         let global = require('../global');
-        global.discord_heper.Acceptinvites(`${request.body.url}`)
-        global.discord_controllers.client.fetchInvite(`${request.body.url}`).then(invite => {
+        global.discord_heper.Acceptinvites(`${request.body.url}`);
+        global.discord_controllers.client.fetchInvite(`${request.body.url}`).then(() => {
             response.redirect('./guilds');
             response.end();
         }).catch(reason => {
-            response.render('guild_add_erroe', {reason: reason});
+            response.render('guild_add_error', {reason: reason});
         });
     }
 
     guild_leave(request, response) {
         let guild = require('../global').discord_controllers.client.guilds.get(`${request.query.id}`);
-        guild.leave().then(v => {
+        guild.leave().then(() => {
             response.redirect('./guilds');
             response.end();
         });
@@ -100,56 +99,69 @@ class http_controllers {
         response.render('guilds', {guilds: arr});
     }
 
-    friendinfo(request, response) {
-        require('../global').discord_controllers.client.fetchUser(`${request.query.id}`).then(user => {
+    friend_info(request, response) {
+        let id = `${request.query.id}`;
+        let global = require('../global');
+        global.discord_controllers.client.fetchUser(id).then(user => {
             user.fetchProfile().then(userProfile => {
                 let arr = [];
                 userProfile.mutualGuilds.forEach(v => {
                     arr.push(v);
                 });
                 userProfile.mutualGuilds = arr;
-                response.render('friendinfo', {userProfile: userProfile});
+                response.render('friend_info', {userProfile: userProfile});
+            }).catch(reason => {
+                let userProfile = {
+                    user: user
+                };
+                let profile = global.discord_api.GetProfile(id);
+                let error = `${reason}\n${JSON.stringify(profile, undefined, 2)}`;
+                response.render('friend_info', {userProfile: userProfile, error: error});
             });
+        }).catch(reason => {
+            let user = global.discord_api.GetUser(id);
+            let profile = global.discord_api.GetProfile(id);
+            let error = `${reason}\n${JSON.stringify(user, undefined, 2)}\n${JSON.stringify(profile, undefined, 2)}`;
+            response.render('friend_info', {userProfile: {}, error: error});
         });
     }
 
-    deletefriend(request, response) {
+    static delete_friend(request, response) {
         require('../global').discord_heper.deletefriend(request.query.id);
-        response.redirect('./editfriends');
+        response.redirect('./edit_friends');
         response.end();
     }
 
-    addfriend(request, response) {
+    static add_friend(request, response) {
         require('../global').discord_heper.addfriend(request.body.id, request.body.name);
-        response.redirect('./editfriends');
+        response.redirect('./edit_friends');
         response.end();
     }
 
-    editfriends(request, response) {
+    static edit_friends(request, response) {
         let friends = require('../global').discord_heper.friends_select();
-        response.render('editfriends', {friends: friends});
+        response.render('edit_friends', {friends: friends});
     }
 
-    findfriends(request, response) {
+    static find_friends(request, response) {
         let guilds = require('../global').discord_heper.Find_friends();
-        response.render('findfriends', {guilds: guilds});
+        response.render('find_friends', {guilds: guilds});
     }
 
-    showdmchanels(request, response) {
-        let chanels = require('../global').discord_heper.Get_dm_chanels_from_db();
-        response.render('showdmchanels', {
-            chanels: chanels
+    static show_dm_channels(request, response) {
+        let channels = require('../global').discord_heper.Get_dm_chanels_from_db();
+        response.render('show_dm_channels', {
+            channels: channels
         });
     }
 
-    showdmchanel(request, response) {
+    static show_dm_channel(request, response) {
         let channel_id = request.query.channel_id;
         let messages = require('../global').discord_heper.Get_dm_chanel_from_db(channel_id);
-        response.render('showdmchanel', {
+        response.render('show_dm_channel', {
             messages: messages
         });
     }
 }
 
-module
-    .exports = new http_controllers();
+module.exports = new http_controllers();

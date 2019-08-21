@@ -1,7 +1,7 @@
 <div class="userProfile">
 
     <div class="userProfile_user">
-        <img class="avatarURL" src="{{userProfile.user.avatarURL}}"/>
+        <img class="avatarURL" src="{{userProfile.user.avatarURL}}" alt=""/>
         <div>ID: {{userProfile.user.id}}</div>
         <div>Tag: {{userProfile.user.tag}}</div>
         <div>CreatedAt: {{userProfile.user.createdAt}}</div>
@@ -9,16 +9,22 @@
 
     <div class="userProfile_mutualGuilds">
         <br/>
-        <div>Mutual Guilds: </div>
+        <div>Mutual Guilds:</div>
         <br/>
         {{#each userProfile.mutualGuilds}}
             <div class="guild">
                 <img class="mutualGuilds_iconURL" src="{{iconURL}}"/>
-                <div class="guild_id">ID: {{id}}</div> |
-                <div class="guild_name">Name: {{name}}</div> |
+                <div class="guild_id">ID: {{id}}</div>
+                |
+                <div class="guild_name">Name: {{name}}</div>
+                |
                 <div class="guild_memberCount">Member Count: {{memberCount}}</div>
             </div>
         {{/each}}
+    </div>
+
+    <div class="error">
+        <pre>{{#if error}}{{error}}{{/if}}</pre>
     </div>
 
 </div>
@@ -26,18 +32,26 @@
 <style>
     .guild {
     }
+
     .guild_id {
         display: inline-block;
     }
+
     .guild_name {
         display: inline-block;
     }
+
     .guild_memberCount {
         display: inline-block;
     }
+
     .avatarURL {
         width: 250px;
+        height: 250px;
+        display: inline-block;
+        border: 1px solid black;
     }
+
     .mutualGuilds_iconURL {
         width: 50px;
     }

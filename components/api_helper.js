@@ -14,15 +14,6 @@ class api_helper {
         return res;
     }
 
-    static GetUsers(users) {
-        let res = [];
-        for (let k in users) {
-            let v = users[k];
-            res.push(v['user']);
-        }
-        return res;
-    }
-
     static clearResult(data) {
         let result = [];
         for (let k in data) {
@@ -33,7 +24,7 @@ class api_helper {
         return result;
     }
 
-    static removeDuplicat(data) {
+    static removeDub(data) {
         let tmp = {};
         for (let k in data)
             tmp[data[k]] = true;

@@ -1,0 +1,71 @@
+<div class="botsettings">
+    <div id="status" class="status {{{status}}}">
+    </div>
+    <h4 id="shead">{{{status}}}</h4>
+
+    <div class="status_edit">
+        <form method="POST" action="/status_edit" id="status_edit_form">
+            <label>
+                <select name="status">
+                    <option value="online">Online</option>
+                    <option value="idle">AFK</option>
+                    <option value="invisible">Invisible</option>
+                    <option value="dnd">Do Not Disturb</option>
+                </select>
+            </label>
+            <input type="submit" id="btnadd" value="Изменить"/>
+        </form>
+    </div>
+
+</div>
+
+<style>
+    .status {
+        display: inline-block;
+        width: 60px;
+        height: 60px;
+    }
+
+    .online {
+        background: #43b581;
+    }
+
+    .idle {
+        background: #faa61a;
+    }
+
+    .invisible {
+        background: #6f7a88;
+    }
+
+    .offline {
+        background: #6f7a88;
+    }
+
+    .dnd {
+        background: #e34546;
+    }
+</style>
+
+<script>
+    /**
+     * @return {string}
+     */
+    function GET(url) {
+        let http = new XMLHttpRequest();
+        http.open('GET', url, false);
+        http.send(null);
+        return http.responseText;
+    }
+
+    let baseURL = '/bot_status';
+
+    function SetStatus() {
+        let response = GET(baseURL);
+        document.getElementById("status").className = `status ${response}`;
+        document.getElementById("shead").innerHTML = response;
+    }
+
+    //SetStatus();
+    setInterval(SetStatus, 2000);
+</script>

@@ -52,7 +52,7 @@ class discord_heper {
     clear_res_urls(res) {
         res = api_helper.GetSearchResult(res);
         res = api_helper.clearResult(res);
-        res = api_helper.removeDuplicat(res);
+        res = api_helper.removeDub(res);
         for (let k in res) {
             let row = {
                 url: res[k],
@@ -114,7 +114,7 @@ class discord_heper {
             guild.search({content: 'https://discord.gg/'}).then(res => {
                 res = api_helper.GetSearchResult(res);
                 res = api_helper.clearResult(res);
-                res = api_helper.removeDuplicat(res);
+                res = api_helper.removeDub(res);
                 for (let k in res) {
                     let row = {
                         url: res[k],
