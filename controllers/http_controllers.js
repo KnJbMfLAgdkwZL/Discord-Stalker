@@ -38,6 +38,7 @@ class http_controllers {
         app.get('/download_Main_db', http_controllers.download_Main_db);
         app.get('/download_Error_Log', http_controllers.download_Error_Log);
         app.get('/Clear_Error_Log', http_controllers.Clear_Error_Log);
+        app.get('/Show_Error_Log', http_controllers.Show_Error_Log);
 
         const port = 3000;
         app.listen(port, (err) => {
@@ -45,6 +46,13 @@ class http_controllers {
             console.log(`http server is listening on 3000`);
             console.log(`    http://localhost:${port}/`);
         });
+    }
+
+    static Show_Error_Log(request, response) {
+        const file = `${__dirname}/../error_log.txt`;
+        let fs = require('fs');
+        let contents = fs.readFileSync(file, 'utf8');
+        response.send(`<pre>${contents}</pre>`);
     }
 
     static download_Main_db(request, response) {
