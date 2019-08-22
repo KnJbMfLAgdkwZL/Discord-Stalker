@@ -1,0 +1,29 @@
+<div class="guild">
+
+    <img src="{{guild.iconURL}}"/>
+    <div>ID: {{guild.id}}</div>
+    <div>Name: {{guild.name}}</div>
+    <div>Created At: {{guild.createdAt}}</div>
+    <div>Region: {{guild.region}}</div>
+    <div>Member Count: {{guild.memberCount}}</div>
+
+    <hr/>
+    <div class="owner">
+        Owner
+        <div>ID: <a href="/friend_info?id={{guild.owner.id}}">{{guild.owner.id}}</a>
+            <div>Display Name: {{guild.owner.displayName}}</div>
+            <div>Nick name: {{guild.owner.nickname}}</div>
+        </div>
+    </div>
+    <hr/>
+
+    <div class="observers">
+        <a href="/guild_members?id={{guild.id}}">Members</a> |
+        <!--
+        <a href="/guild_channels?id={{guild.id}}">channels</a> |
+        <a href="/guild_roles?id={{guild.id}}">roles</a> |
+        <a href="/guild_systemChannel?id={{guild.id}}">systemChannel</a>
+        -->
+    </div>
+
+</div>

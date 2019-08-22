@@ -14,12 +14,13 @@
     <div class="guilds">
         {{#each guilds}}
             <div class="guild">
+                <a href="/guild?id={{id}}" class="aguild">
                 <img class="guild_iconURL" src="{{iconURL}}" alt=" "/>
-                <!--    <div class="guild_id">{{id}}</div>  -->
+                </a>
                 <div class="guild_name">{{name}}</div>
                 <div class="guild_controls">
                     <a href="/guild_leave?id={{id}}">
-                        Leave
+                    Leave
                     </a>
                 </div>
             </div>
@@ -29,24 +30,33 @@
 </div>
 
 <style>
+    .aguild {
+        text-decoration: none;
+    }
+
     .guild_add {
         margin-bottom: 10px;
     }
+
     .guild_iconURL {
         display: inline-block;
         height: 40px;
         width: 40px;
         border: 1px solid black;
     }
+
     .guild_id {
         display: inline-block;
     }
+
     .guild_name {
         display: inline-block;
     }
+
     .guild_memberCount {
         display: inline-block;
     }
+
     .guild_controls {
         display: inline-block;
     }

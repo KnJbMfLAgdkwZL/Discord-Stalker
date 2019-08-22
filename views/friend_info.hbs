@@ -1,10 +1,11 @@
 <div class="userProfile">
 
     <div class="userProfile_user">
-        <img class="avatarURL" src="{{userProfile.user.avatarURL}}" alt=""/>
+        <img class="avatarURL" src="{{userProfile.user.AVATAR}}" alt=""/>
         <div>ID: {{userProfile.user.id}}</div>
         <div>Tag: {{userProfile.user.tag}}</div>
         <div>CreatedAt: {{userProfile.user.createdAt}}</div>
+        <div>Bot: {{userProfile.user.bot}}</div>
     </div>
 
     <div class="userProfile_mutualGuilds">
@@ -14,7 +15,9 @@
         {{#each userProfile.mutualGuilds}}
             <div class="guild">
                 <img class="mutualGuilds_iconURL" src="{{iconURL}}"/>
-                <div class="guild_id">ID: {{id}}</div>
+                <div class="guild_id">ID:
+                    <a href="/guild?id={{id}}" class="aguild">{{id}}</a>
+                </div>
                 |
                 <div class="guild_name">Name: {{name}}</div>
                 |

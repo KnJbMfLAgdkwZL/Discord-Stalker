@@ -40,12 +40,76 @@ class http_controllers {
         app.get('/Clear_Error_Log', http_controllers.Clear_Error_Log);
         app.get('/Show_Error_Log', http_controllers.Show_Error_Log);
 
+        app.get('/guild', http_controllers.guild);
+
+        app.get('/guild_members', http_controllers.guild_members);
+        app.get('/guild_channels', http_controllers.guild_channels);
+        app.get('/guild_roles', http_controllers.guild_roles);
+        app.get('/guild_systemChannel', http_controllers.guild_systemChannel);
+
         const port = 3000;
         app.listen(port, (err) => {
             if (err) return console.log('something bad happened', err);
             console.log(`http server is listening on 3000`);
             console.log(`    http://localhost:${port}/`);
         });
+    }
+
+    static guild_members(request, response) {
+        let id = `${request.query.id}`;
+        let client = require('../global').discord_controllers.client;
+        client.syncGuilds();
+        let guild = client.guilds.get(id);
+        guild.fetchMembers().then(value => {
+            let members = value.members;
+            let arr = [];
+            for (let [k, v] of members) {
+                let user = v.user;
+                user.AVATAR = user.avatarURL;
+                if (!user.AVATAR) {
+                    user.AVATAR = user.displayAvatarURL;
+                    if (!user.AVATAR)
+                        user.AVATAR = user.defaultAvatarURL;
+                }
+                user.joinedAt = v.joinedAt;
+                arr.push(user);
+            }
+            response.render('guild_members', {members: arr});
+        }).catch(reason => {
+            response.send(`<pre>${reason}</pre>`);
+        });
+    }
+
+    static guild_channels(request, response) {
+        // let id = `${request.query.id}`;
+        // let client = require('../global').discord_controllers.client;
+        // client.syncGuilds();
+        // let guild = client.guilds.get(id);
+        // response.render('guild_channels', {guild: guild});
+    }
+
+    static guild_roles(request, response) {
+        // let id = `${request.query.id}`;
+        // let client = require('../global').discord_controllers.client;
+        // client.syncGuilds();
+        // let guild = client.guilds.get(id);
+        // response.render('guild_roles', {guild: guild});
+    }
+
+    static guild_systemChannel(request, response) {
+        // let id = `${request.query.id}`;
+        // let client = require('../global').discord_controllers.client;
+        // client.syncGuilds();
+        // let guild = client.guilds.get(id);
+        // response.render('guild_systemChannel', {guild: guild});
+    }
+
+    static guild(request, response) {
+        let id = `${request.query.id}`;
+        let client = require('../global').discord_controllers.client;
+        client.syncGuilds();
+        let guild = client.guilds.get(id);
+        response.render('guild', {guild: guild});
     }
 
     static Show_Error_Log(request, response) {
@@ -137,6 +201,12 @@ class http_controllers {
         let id = `${request.query.id}`;
         let global = require('../global');
         global.discord_controllers.client.fetchUser(id).then(user => {
+            user.AVATAR = user.avatarURL;
+            if (!user.AVATAR) {
+                user.AVATAR = user.displayAvatarURL;
+                if (!user.AVATAR)
+                    user.AVATAR = user.defaultAvatarURL;
+            }
             user.fetchProfile().then(userProfile => {
                 let arr = [];
                 userProfile.mutualGuilds.forEach(v => {
@@ -152,10 +222,13 @@ class http_controllers {
                 let error = `${reason}\n${JSON.stringify(profile, undefined, 2)}`;
                 response.render('friend_info', {userProfile: userProfile, error: error});
             });
+
         }).catch(reason => {
             let user = global.discord_api.GetUser(id);
             let profile = global.discord_api.GetProfile(id);
-            let error = `${reason}\n${JSON.stringify(user, undefined, 2)}\n${JSON.stringify(profile, undefined, 2)}`;
+            let error = `${reason}\n`;
+            error += `${JSON.stringify(user, undefined, 2)}\n`;
+            error += `${JSON.stringify(profile, undefined, 2)}\n`;
             response.render('friend_info', {userProfile: {}, error: error});
         });
     }

@@ -1,0 +1,76 @@
+<div class="members">
+    <div id="Members_count">
+        Members count: {{members.length}}
+    </div>
+
+    <div class="users">
+        <table border="0" cellpadding="0" cellspacing="0">
+            <tr>
+                <th></th>
+                <th>ID</th>
+                <th>Tag</th>
+                <th>Bot</th>
+                <th>CreatedAt</th>
+                <th>JoinedAt</th>
+            </tr>
+            {{#each members}}
+                <tr class="user">
+                    <td><img class="avatarURL" src="{{AVATAR}}" alt=""/></td>
+                    <td>
+                        <a href="/friend_info?id={{id}}" class="id_a">
+                        {{id}}
+                        </a>
+                    </td>
+                    <td>{{tag}}</td>
+                    <td>{{bot}}</td>
+                    <td>{{createdAt}}</td>
+                    <td>{{joinedAt}}</td>
+                </tr>
+            {{/each}}
+        </table>
+
+    </div>
+</div>
+
+<script>
+    const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+    const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
+                    v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+    )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+    document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+        const table = th.closest('table');
+        Array.from(table.querySelectorAll('tr:nth-child(n+2)'))
+                .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+                .forEach(tr => table.appendChild(tr));
+    })));
+</script>
+
+<style>
+    th {
+        cursor: pointer;
+    }
+
+    .users > table {
+        border: 1px solid white;
+        width: 95%;
+    }
+
+    tr {
+        padding: 0px;
+        margin: 0px;
+    }
+
+    td {
+        vertical-align: middle;
+        border: 1px solid gray;
+        padding: 0px 0px;
+    }
+
+    .avatarURL {
+        display: inline-block;
+        border: 1px solid black;
+        height: 50px;
+        width: 50px;
+    }
+
+</style>
