@@ -35,12 +35,36 @@ class http_controllers {
         app.post('/guild_add', this.guild_add);
         app.post('/status_edit', this.status_edit);
 
+        app.get('/download_Main_db', http_controllers.download_Main_db);
+        app.get('/download_Error_Log', http_controllers.download_Error_Log);
+        app.get('/Clear_Error_Log', http_controllers.Clear_Error_Log);
+
         const port = 3000;
         app.listen(port, (err) => {
             if (err) return console.log('something bad happened', err);
             console.log(`http server is listening on 3000`);
             console.log(`    http://localhost:${port}/`);
         });
+    }
+
+    static download_Main_db(request, response) {
+        const file = `${__dirname}/../main.db`;
+        response.download(file);
+    }
+
+    static download_Error_Log(request, response) {
+        const file = `${__dirname}/../error_log.txt`;
+        response.download(file);
+    }
+
+    static Clear_Error_Log(request, response) {
+        let fs = require('fs');
+        fs.writeFile(`${__dirname}/../error_log.txt`,
+            '', () => {
+                response.redirect('./bot_settings');
+                response.end();
+            }
+        );
     }
 
     static home(request, response) {
@@ -60,7 +84,7 @@ class http_controllers {
             response.redirect('./bot_settings');
             response.end();
         }).catch(reason => {
-            console.log(reason);
+            response.send(JSON.stringify(reason));
         });
     }
 
@@ -86,6 +110,8 @@ class http_controllers {
         guild.leave().then(() => {
             response.redirect('./guilds');
             response.end();
+        }).catch(reason => {
+            response.send(JSON.stringify(reason));
         });
     }
 
@@ -150,17 +176,13 @@ class http_controllers {
 
     static show_dm_channels(request, response) {
         let channels = require('../global').discord_heper.Get_dm_chanels_from_db();
-        response.render('show_dm_channels', {
-            channels: channels
-        });
+        response.render('show_dm_channels', {channels: channels});
     }
 
     static show_dm_channel(request, response) {
         let channel_id = request.query.channel_id;
         let messages = require('../global').discord_heper.Get_dm_chanel_from_db(channel_id);
-        response.render('show_dm_channel', {
-            messages: messages
-        });
+        response.render('show_dm_channel', {messages: messages});
     }
 }
 

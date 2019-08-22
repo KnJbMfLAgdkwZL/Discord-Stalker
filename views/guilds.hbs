@@ -7,6 +7,10 @@
         </form>
     </div>
 
+    <div id="guilds_count">
+        Guilds count: {{guilds.length}}
+    </div>
+
     <div class="guilds">
         {{#each guilds}}
             <div class="guild">
@@ -16,7 +20,7 @@
                 <div class="guild_controls">
                     <a href="/guild_leave?id={{id}}">
                         Leave
-                    <a>
+                    </a>
                 </div>
             </div>
         {{/each}}
