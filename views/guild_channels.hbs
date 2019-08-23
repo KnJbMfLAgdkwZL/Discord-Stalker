@@ -11,7 +11,6 @@
                     |
                     <div class="c_Members_Length">Members Length: {{members.length}}</div>
                 </div>
-
                 <div class="members">
                     {{#each members}}
                         <div class="chanel_user friend_{{friend}}">
@@ -30,11 +29,33 @@
                         </div>
                     {{/each}}
                 </div>
+            </div>
+        {{/each}}
+    </div>
+    <hr/>
+    <div class="TextChannels">
+
+        <h3>Text Channels Length: {{TextChannels.length}}</h3>
+        {{#each TextChannels}}
+            <div class="TextChannels">
+
+                <div class="title">
+                    <div class="c_name">{{name}}</div>
+                    |
+                    <div class="c_id">
+                        <a href="/guild_text_channel?id={{id}}">
+                            {{id}}
+                        </a>
+                    </div>
+                    |
+                    <div class="c_id">{{type}}</div>
+                </div>
 
             </div>
         {{/each}}
 
     </div>
+
 </div>
 
 <style>

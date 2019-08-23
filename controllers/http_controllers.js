@@ -45,14 +45,89 @@ class http_controllers {
 
         app.get('/guild_members', http_controllers.guild_members);
         app.get('/guild_channels', http_controllers.guild_channels);
-        app.get('/guild_systemChannel', http_controllers.guild_systemChannel);
+        app.get('/guild_text_channel', http_controllers.guild_text_channel);
+        app.get('/guild_text_channel_messages', http_controllers.guild_text_channel_messages);
 
-        const port = 3000;
+        const port = 3010;
         app.listen(port, (err) => {
             if (err) return console.log('something bad happened', err);
             console.log(`http server is listening on 3000`);
             console.log(`    http://localhost:${port}/`);
         });
+    }
+
+    static guild_text_channel_messages(request, response) {
+        let channel_id = `${request.query.id}`;
+        let lastMessageID = `${request.query.lastMessageID}`;
+        let client = require('../global').discord_controllers.client;
+        client.syncGuilds();
+        let channel = client.channels.get(channel_id);
+        let options = {limit: 100};
+        if (lastMessageID !== 'undefined')
+            options.before = lastMessageID;
+        console.log(`${channel_id} ${lastMessageID}`);
+        console.log(options);
+        channel.fetchMessages(options).then(messages => {
+            let m = http_controllers.messages_to_array(messages);
+            let data = JSON.stringify(m);
+            response.send(`${data}`);
+        }).catch(reason => {
+            response.send(`${reason}`);
+        });
+    }
+
+    static guild_text_channel(request, response) {
+        let channel_id = `${request.query.id}`;
+        let client = require('../global').discord_controllers.client;
+        client.syncGuilds();
+
+
+    }
+
+    static get_AVATAR(user) {
+        let avatar = user.avatarURL;
+        if (!avatar) {
+            avatar = user.displayAvatarURL;
+            if (!avatar)
+                avatar = user.defaultAvatarURL;
+        }
+        return avatar;
+    }
+
+    static get_NAME(user) {
+        let name = user.tag;
+        if (!name) {
+            name = user.username;
+            if (!name)
+                name = user.id;
+        }
+        return name;
+    }
+
+    static messages_to_array(messages) {
+        let data = [];
+        for (let [k, v] of messages) {
+            try {
+                let message = {};
+                message.id = v.id;
+                message.content = v.content;
+                message.createdAt = v.createdAt;
+                message.user_id = v.author.id;
+                message.user_name = http_controllers.get_NAME(v.author);
+                message.user_avatar = http_controllers.get_AVATAR(v.author);
+                message.attachments = [];
+                for (let [ka, a] of v.attachments) {
+                    let attachment = {};
+                    attachment.url = a.url;
+                    attachment.proxyURL = a.proxyURL;
+                    message.attachments.push(attachment)
+                }
+                data.push(message);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        return data;
     }
 
     static guild_channels(request, response) {
@@ -61,6 +136,7 @@ class http_controllers {
         client.syncGuilds();
         let guild = client.guilds.get(id);
 
+        let TextChannels = [];
         let VoiceChannels = [];
         for (let [k, v] of guild.channels) {
             if (v.type === 'voice') {
@@ -80,11 +156,11 @@ class http_controllers {
                     channel.members.push(user);
                 }
                 VoiceChannels.push(channel);
-            } else {
-                //other chanels
+            } else if (v.type === 'text') {
+                TextChannels.push(v);
             }
         }
-        response.render('guild_channels', {VoiceChannels: VoiceChannels});
+        response.render('guild_channels', {VoiceChannels: VoiceChannels, TextChannels: TextChannels});
         //response.send('ok');
     }
 
@@ -116,14 +192,6 @@ class http_controllers {
         }).catch(reason => {
             response.send(`<pre>${reason}</pre>`);
         });
-    }
-
-    static guild_systemChannel(request, response) {
-        // let id = `${request.query.id}`;
-        // let client = require('../global').discord_controllers.client;
-        // client.syncGuilds();
-        // let guild = client.guilds.get(id);
-        // response.render('guild_systemChannel', {guild: guild});
     }
 
     static guild(request, response) {

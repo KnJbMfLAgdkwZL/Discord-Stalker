@@ -12,8 +12,7 @@ class messages_dm extends model {
     }
 
     select_group_by_channel_id() {
-        let sql = `SELECT * FROM ${this.table} GROUP BY channel_id`;
-        return this.sql(sql);
+        return this.select({}, ['channel_id']);
     }
 }
 
