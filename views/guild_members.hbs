@@ -1,3 +1,37 @@
+<style>
+    .users > table
+    {
+        width: 95%;
+    }
+    th {
+        cursor: pointer;
+    }
+
+    .users > table {
+        border: 1px solid white;
+        width: 95%;
+    }
+
+    tr {
+        padding: 0px;
+        margin: 0px;
+    }
+
+    td {
+        vertical-align: middle;
+        border: 1px solid gray;
+        padding: 0px 0px;
+    }
+
+    .avatarURL {
+        display: inline-block;
+        border: 1px solid black;
+        height: 50px;
+        width: 50px;
+    }
+
+</style>
+
 <div class="members">
     <div id="Members_count">
         Members count: {{members.length}}
@@ -15,7 +49,11 @@
             </tr>
             {{#each members}}
                 <tr class="user">
-                    <td><img class="avatarURL" src="{{AVATAR}}" alt=""/></td>
+                    <td>
+                        {{#if AVATAR}}
+                            <img class="avatarURL" src="{{AVATAR}}" alt=""/>
+                        {{/if}}
+                    </td>
                     <td>
                         <a href="/friend_info?id={{id}}" class="id_a">
                         {{id}}
@@ -45,32 +83,3 @@
     })));
 </script>
 
-<style>
-    th {
-        cursor: pointer;
-    }
-
-    .users > table {
-        border: 1px solid white;
-        width: 95%;
-    }
-
-    tr {
-        padding: 0px;
-        margin: 0px;
-    }
-
-    td {
-        vertical-align: middle;
-        border: 1px solid gray;
-        padding: 0px 0px;
-    }
-
-    .avatarURL {
-        display: inline-block;
-        border: 1px solid black;
-        height: 50px;
-        width: 50px;
-    }
-
-</style>

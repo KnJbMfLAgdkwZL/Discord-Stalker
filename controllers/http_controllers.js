@@ -9,6 +9,7 @@ class http_controllers {
         app.use(express.json());
         const handlebars = require('express-handlebars');
         const path = require('path');
+
         app.engine('.hbs', handlebars({
             defaultLayout: 'main',
             extname: '.hbs',
@@ -44,7 +45,6 @@ class http_controllers {
 
         app.get('/guild_members', http_controllers.guild_members);
         app.get('/guild_channels', http_controllers.guild_channels);
-        app.get('/guild_roles', http_controllers.guild_roles);
         app.get('/guild_systemChannel', http_controllers.guild_systemChannel);
 
         const port = 3000;
@@ -55,8 +55,42 @@ class http_controllers {
         });
     }
 
+    static guild_channels(request, response) {
+        let id = `${request.query.id}`;
+        let client = require('../global').discord_controllers.client;
+        client.syncGuilds();
+        let guild = client.guilds.get(id);
+
+        let VoiceChannels = [];
+        for (let [k, v] of guild.channels) {
+            if (v.type === 'voice') {
+                let channel = {
+                    id: v.id,
+                    name: v.name,
+                    members: []
+                };
+                for (let [ke, va] of v.members) {
+                    let user = va.user;
+                    user.AVATAR = user.avatarURL;
+                    if (!user.AVATAR) {
+                        user.AVATAR = user.displayAvatarURL;
+                        if (!user.AVATAR)
+                            user.AVATAR = user.defaultAvatarURL;
+                    }
+                    channel.members.push(user);
+                }
+                VoiceChannels.push(channel);
+            } else {
+                //other chanels
+            }
+        }
+        response.render('guild_channels', {VoiceChannels: VoiceChannels});
+        //response.send('ok');
+    }
+
     static guild_members(request, response) {
         let id = `${request.query.id}`;
+        let avatar = `${request.query.avatar}` === '1';
         let client = require('../global').discord_controllers.client;
         client.syncGuilds();
         let guild = client.guilds.get(id);
@@ -65,35 +99,23 @@ class http_controllers {
             let arr = [];
             for (let [k, v] of members) {
                 let user = v.user;
-                user.AVATAR = user.avatarURL;
-                if (!user.AVATAR) {
-                    user.AVATAR = user.displayAvatarURL;
-                    if (!user.AVATAR)
-                        user.AVATAR = user.defaultAvatarURL;
-                }
                 user.joinedAt = v.joinedAt;
+
+                if (avatar) {
+                    user.AVATAR = user.avatarURL;
+                    if (!user.AVATAR) {
+                        user.AVATAR = user.displayAvatarURL;
+                        if (!user.AVATAR)
+                            user.AVATAR = user.defaultAvatarURL;
+                    }
+                } else
+                    user.AVATAR = false;
                 arr.push(user);
             }
             response.render('guild_members', {members: arr});
         }).catch(reason => {
             response.send(`<pre>${reason}</pre>`);
         });
-    }
-
-    static guild_channels(request, response) {
-        // let id = `${request.query.id}`;
-        // let client = require('../global').discord_controllers.client;
-        // client.syncGuilds();
-        // let guild = client.guilds.get(id);
-        // response.render('guild_channels', {guild: guild});
-    }
-
-    static guild_roles(request, response) {
-        // let id = `${request.query.id}`;
-        // let client = require('../global').discord_controllers.client;
-        // client.syncGuilds();
-        // let guild = client.guilds.get(id);
-        // response.render('guild_roles', {guild: guild});
     }
 
     static guild_systemChannel(request, response) {

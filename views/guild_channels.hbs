@@ -1,0 +1,87 @@
+<div class="guild_channels">
+
+    <div class="VoiceChannels">
+        <h3>Voice Channels Length: {{VoiceChannels.length}}</h3>
+        {{#each VoiceChannels}}
+            <div class="VoiceChannel">
+                <div class="title">
+                    <div class="c_name">{{name}}</div>
+                    |
+                    <div class="c_id">{{id}}</div>
+                    |
+                    <div class="c_Members_Length">Members Length: {{members.length}}</div>
+                </div>
+
+                <div class="members">
+                    {{#each members}}
+                        <div class="chanel_user friend_{{friend}}">
+                            <a href="/friend_info?id={{id}}" class="id_a">
+                            {{#if avatar}}
+                                <img class="user_avatar" src='{{AVATAR}}'/>
+                            {{/if}}
+                            </a>
+                            <div class="user_title_wraper">
+                                <div class="user_username">
+                                    {{#if bot}}[BOT]{{/if}}
+                                    {{tag}}
+                                </div>
+                                <div class="user_id">{{id}}</div>
+                            </div>
+                        </div>
+                    {{/each}}
+                </div>
+
+            </div>
+        {{/each}}
+
+    </div>
+</div>
+
+<style>
+
+    .c_name {
+        display: inline-block;
+        font-weight: bold;
+        font-size: 15px;
+    }
+
+    .c_id {
+        display: inline-block;
+        font-size: 15px;
+    }
+
+    .c_Members_Length {
+        display: inline-block;
+        font-size: 15px;
+    }
+
+    .user_username {
+        display: inline-block;
+    }
+
+    img.user_avatar {
+        display: inline-block;
+        height: 35px;
+        width: 35px;
+        border-radius: 90px;
+        border: 1px solid gray;
+    }
+
+    .user_title_wraper {
+        display: inline-block;
+        position: absolute;
+        margin-left: 5px;
+        margin-top: 2px;
+    }
+
+    .user_id {
+        font-style: italic;
+        font-size: 14px;
+    }
+
+    .chanel_user {
+        margin-bottom: 1px;
+        margin-left: 5px;
+        font-size: 14px;
+    }
+</style>
