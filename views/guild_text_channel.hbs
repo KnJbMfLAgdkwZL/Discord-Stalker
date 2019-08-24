@@ -1,0 +1,119 @@
+<div>
+    <a href="/guild?id={{data.guild_id}}">{{data.guild_id}} | {{data.guild_name}} </a>
+    <br/>
+    <br/>
+    <h4>
+        {{data.channel_id}} | {{data.channel_name}}
+    </h4>
+    <br/>
+    <br/>
+</div>
+
+
+<div id="messages">
+</div>
+
+<br/>
+<div id="controls">
+    <button lastMessageID="" id="load_more">Load more</button>
+</div>
+<br/>
+
+<script>
+    /**
+     * @return {string}
+     */
+    function GET(url) {
+        let http = new XMLHttpRequest();
+        http.open('GET', url, false);
+        http.send(null);
+        return http.responseText;
+    }
+
+    function add_messages(str) {
+        try {
+            let messagesDIV = document.getElementById('messages');
+            let messages = JSON.parse(str);
+            for (let m of messages) {
+                let message = document.createElement("div");
+                message.classList.add("message");
+                let message_head = document.createElement("div");
+                message_head.classList.add("message_head");
+                let user_avatar = document.createElement("img");
+                user_avatar.classList.add("user_avatar");
+                user_avatar.src = m.user_avatar.replace('size=2048', 'size=64');
+                let message_head_title = document.createElement("div");
+                message_head_title.classList.add("message_head_title");
+                message_head_title.innerHTML = `${m.user_name} | ${m.createdAt}`;
+                message_head.appendChild(user_avatar);
+                message_head.appendChild(message_head_title);
+                message.appendChild(message_head);
+                let message_content = document.createElement("div");
+                message_content.classList.add("message_content");
+                let content = document.createElement("div");
+                content.innerHTML = m.content;
+                message_content.appendChild(content);
+
+                for (let attachment of m.attachments) {
+                    let a = document.createElement("a");
+                    let url = attachment.url;
+                    if (!url)
+                        url = attachment.proxyURL;
+                    a.href = url;
+                    a.innerHTML = url;
+                    message_content.appendChild(a);
+                    message_content.appendChild(document.createElement("br"));
+                }
+                message.appendChild(message_content);
+                messagesDIV.appendChild(message);
+                messagesDIV.appendChild(document.createElement("hr"));
+            }
+            let load_more = document.getElementById('load_more');
+            load_more.setAttribute('lastMessageID', messages[messages.length - 1].id);
+        } catch (e) {
+            document.getElementById('messages').innerHTML += str;
+        }
+    }
+
+    let baseURL = '/guild_text_channel_messages?id={{data.channel_id}}';
+    let str = GET(baseURL);
+    add_messages(str);
+
+    document.getElementById('load_more').onclick = function () {
+        let lastMessageID = this.getAttribute('lastMessageID');
+        let url = `${baseURL}&lastMessageID=${lastMessageID}`;
+        let str = GET(url);
+        add_messages(str);
+    };
+
+
+</script>
+<style>
+    .attachments_img {
+        width: 200px;
+    }
+
+    .user_avatar {
+        display: inline-block;
+        height: 35px;
+        width: 35px;
+        border: 1px solid black;
+        border-radius: 90px;
+    }
+
+    .message_head_title {
+        display: inline-block;
+        margin-top: 7px;
+        margin-left: 10px;
+        position: absolute;
+        font-style: italic;
+    }
+
+    .message_head {
+        margin-bottom: 5px;
+    }
+
+    .message_content {
+        margin-left: 45px;
+    }
+</style>

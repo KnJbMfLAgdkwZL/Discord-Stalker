@@ -48,7 +48,7 @@ class http_controllers {
         app.get('/guild_text_channel', http_controllers.guild_text_channel);
         app.get('/guild_text_channel_messages', http_controllers.guild_text_channel_messages);
 
-        const port = 3010;
+        const port = 3000;
         app.listen(port, (err) => {
             if (err) return console.log('something bad happened', err);
             console.log(`http server is listening on 3000`);
@@ -65,8 +65,6 @@ class http_controllers {
         let options = {limit: 100};
         if (lastMessageID !== 'undefined')
             options.before = lastMessageID;
-        console.log(`${channel_id} ${lastMessageID}`);
-        console.log(options);
         channel.fetchMessages(options).then(messages => {
             let m = http_controllers.messages_to_array(messages);
             let data = JSON.stringify(m);
@@ -80,8 +78,14 @@ class http_controllers {
         let channel_id = `${request.query.id}`;
         let client = require('../global').discord_controllers.client;
         client.syncGuilds();
-
-
+        let channel = client.channels.get(channel_id);
+        let data = {
+            channel_id: channel_id,
+            channel_name: channel.name,
+            guild_id: channel.guild.id,
+            guild_name: channel.guild.name,
+        };
+        response.render('guild_text_channel', {data: data});
     }
 
     static get_AVATAR(user) {

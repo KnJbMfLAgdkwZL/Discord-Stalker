@@ -3,7 +3,9 @@
         <div class="guild">
 
             <div class="guild_head">
-                <img class="head_ico" src='https://cdn.discordapp.com/icons/{{id}}/{{icon}}.webp'/>
+                <a href="/guild?id={{id}}" class="aguild">
+                    <img class="head_ico" src='https://cdn.discordapp.com/icons/{{id}}/{{icon}}.webp'/>
+                </a>
                 <div class="guild_head_title">
                     <div class="guild_name">{{name}}</div>
                     <div class="guild_id">{{id}}</div>
@@ -60,7 +62,9 @@
     }
 
     img.head_ico {
+        display: inline-block;
         height: 40px;
+        width: 40px;
         border-radius: 5px;
     }
 
