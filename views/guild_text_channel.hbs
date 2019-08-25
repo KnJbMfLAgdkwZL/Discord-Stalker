@@ -30,6 +30,57 @@
         return http.responseText;
     }
 
+    let img_type = ['jpeg', 'jpg', 'png', 'gif', 'tiff', 'psd', 'pdf', 'eps', 'ai', 'indd', 'raw', 'apng', 'svg', 'bmp', 'ico'];
+    let media_type = ['ogm', 'mp4', 'ogv', 'oga', 'ogx', 'ogg', 'avi', 'mkv', 'webm', 'wav', 'mp3', 'aac'];
+    let http = ['https://', 'http://'];
+
+    function getFile(content, attachment = false) {
+        let type = content.split('.');
+        type = type[type.length - 1];
+        type = type.toLocaleLowerCase();
+        if (img_type.includes(type)) {
+            let img_attachment = document.createElement("img");
+            img_attachment.classList.add("img_attachment");
+            img_attachment.src = content;
+            return img_attachment;
+        } else if (media_type.includes(type)) {
+            let video = document.createElement("video");
+            video.classList.add("attachment_video");
+            video.src = content;
+            video.height = "270";
+            video.width = "400";
+            video.setAttribute('controls', "");
+            return video;
+        } else {
+            let a = document.createElement("a");
+            a.href = content;
+            if (attachment) {
+                let sl_spl = content.split('/');
+                a.innerHTML = sl_spl[sl_spl.length - 1];
+            } else
+                a.innerHTML = content;
+            return a;
+        }
+    }
+
+    function is_url(str) {
+        for (let h of http)
+            if (str.includes(h))
+                return true;
+        return false;
+    }
+
+    function is_file(str) {
+        if (str.includes('.')) {
+            let type = str.split('.');
+            type = type[type.length - 1];
+            type = type.toLocaleLowerCase();
+            if (type)
+                return true;
+        }
+        return false;
+    }
+
     function add_messages(str) {
         try {
             let messagesDIV = document.getElementById('messages');
@@ -53,42 +104,76 @@
                 let content = document.createElement("div");
                 content.innerHTML = m.content;
                 message_content.appendChild(content);
-
+                if (m.content.includes('\n')) {
+                    let content_spl = m.content.split('\n');
+                    for (let c of content_spl) {
+                        if (is_url(c)) {
+                            if (is_file(c)) {
+                                let html_control = getFile(c);
+                                message_content.appendChild(html_control);
+                            }
+                        }
+                    }
+                } else if (m.content.includes(' ')) {
+                    let content_spl = m.content.split(' ');
+                    for (let c of content_spl) {
+                        if (is_url(c)) {
+                            if (is_file(c)) {
+                                let html_control = getFile(c);
+                                message_content.appendChild(html_control);
+                            }
+                        }
+                    }
+                } else {
+                    if (is_url(m.content)) {
+                        if (is_file(m.content)) {
+                            let html_control = getFile(m.content);
+                            message_content.appendChild(html_control);
+                        }
+                    }
+                }
                 for (let attachment of m.attachments) {
-                    let a = document.createElement("a");
                     let url = attachment.url;
                     if (!url)
                         url = attachment.proxyURL;
-                    a.href = url;
-                    a.innerHTML = url;
-                    message_content.appendChild(a);
+                    let html_control = getFile(url, true);
+                    message_content.appendChild(html_control);
                     message_content.appendChild(document.createElement("br"));
                 }
                 message.appendChild(message_content);
                 messagesDIV.appendChild(message);
+                messagesDIV.appendChild(document.createElement("br"));
                 messagesDIV.appendChild(document.createElement("hr"));
             }
             let load_more = document.getElementById('load_more');
             load_more.setAttribute('lastMessageID', messages[messages.length - 1].id);
         } catch (e) {
-            document.getElementById('messages').innerHTML += str;
+            if (str.length < 100)
+                document.getElementById('messages').innerHTML += str;
+            document.getElementById('messages').innerHTML += e;
         }
     }
 
     let baseURL = '/guild_text_channel_messages?id={{data.channel_id}}';
     let str = GET(baseURL);
     add_messages(str);
-
     document.getElementById('load_more').onclick = function () {
         let lastMessageID = this.getAttribute('lastMessageID');
         let url = `${baseURL}&lastMessageID=${lastMessageID}`;
         let str = GET(url);
         add_messages(str);
     };
-
-
 </script>
 <style>
+    .img_attachment {
+        border: 1px solid black;
+        width: 400px;
+    }
+
+    .attachment_video {
+        border: 1px solid black;
+    }
+
     .attachments_img {
         width: 200px;
     }
