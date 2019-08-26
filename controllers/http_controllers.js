@@ -18,6 +18,7 @@ class http_controllers {
         app.set('view engine', '.hbs');
         app.set('views', path.join(__dirname, '../views'));
         app.disable('view cache');
+        app.use(express.static('./views/public/'));
 
         app.get('/find_friends', http_controllers.find_friends);
         app.get('/show_dm_channels', http_controllers.show_dm_channels);
