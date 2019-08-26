@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Discord Stalker</title>
-    <link rel="stylesheet" href="/main.css">
+<!--     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="/bootstrap.min.css">
 </head>
 <body>
     <div id="header">
-        <a href="/find_friends">Find Friends</a>
-        |
-        <a href="/edit_friends">Edit Friends</a>
-        |
-        <a href="/guilds">Guilds</a>
-        |
-        <a href="/bot_settings">Bot Settings</a>
+        <a href="/find_friends" class="btn btn-primary">Find Friends</a>
+        <a href="/edit_friends" class="btn btn-primary">Edit Friends</a>
+        <a href="/guilds" class="btn btn-primary">Guilds</a>
+        <a href="/bot_settings" class="btn btn-primary">Bot Settings</a>
     </div>
 
     <div id="body">
@@ -21,6 +19,9 @@
     <div>
 
     <style>
+        hr{
+            background: #eae3e3;
+        }
         * {
             padding: 0px;
             margin: 0px;
@@ -33,8 +34,37 @@
         #header
         {
             padding: 5px;
-            margin: 5px 0px;
-            border-bottom: 1px solid black;
+            margin: 5px 8px;
+        }
+        .guild_chanel {
+		    margin-bottom: 5px;
+		    width: 300px;
+		}
+		.guilds {
+		    font-size: 15px;
+		    display: flex;
+		}
+		.guild {
+			border: 1px solid;
+		    padding: 3px;
+		    margin: 3px;
+            border-radius: 5px;
+            border-color: #7d7d7d;
+		}
+		.chanel_user {
+		    display: flex;
+		}
+		.user_title_wraper {
+		    position: relative;
+		}
+		.user_username {
+		    display: block;
+		}
+        .guild_head {
+            display: flex;
+        }
+        .friend_true {
+            background: #3c3939;
         }
     </style>
 
