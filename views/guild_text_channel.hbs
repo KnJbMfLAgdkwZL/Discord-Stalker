@@ -93,15 +93,46 @@
                 let user_avatar = document.createElement("img");
                 user_avatar.classList.add("user_avatar");
                 user_avatar.src = m.user_avatar.replace('size=2048', 'size=64');
+                let user_url = document.createElement("a");
+                user_url.href = `/friend_info?id=${m.user_id}`;
+                user_url.appendChild(user_avatar);
                 let message_head_title = document.createElement("div");
                 message_head_title.classList.add("message_head_title");
-                message_head_title.innerHTML = `${m.user_name} | ${m.createdAt}`;
-                message_head.appendChild(user_avatar);
+                message_head_title.innerHTML = `${m.user_name} | <a class='m_user_id' href='/friend_info?id=${m.user_id}'>${m.user_id}</a> | ${m.createdAt}`;
+                message_head.appendChild(user_url);
                 message_head.appendChild(message_head_title);
                 message.appendChild(message_head);
                 let message_content = document.createElement("div");
                 message_content.classList.add("message_content");
                 let content = document.createElement("div");
+                let reg = /<@[!]*[0-9]+>/g;
+                let matches = m.content.match(reg);
+                for (let k in matches) {
+                    let match = matches[k];
+                    let rep = match.replace('<', '');
+                    rep = rep.replace('>', '');
+                    rep = rep.replace('@', '');
+                    rep = rep.replace('!', '');
+                    let u_id = rep;
+                    let u_nick = u_id;
+                    try {
+                        let str = GET(`/get_user_by_id?id=${u_id}`);
+                        if (str !== 'error get_user_by_id') {
+                            let user = JSON.parse(str);
+                            u_nick = user.tag;
+                            if (!u_nick) {
+                                u_nick = `${user.username}#${user.discriminator}`;
+                                if (!u_nick) {
+                                    u_nick = `${user.id}`;
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.log(e);
+                    }
+                    let u_a = `<a class="user_mentions" href='/friend_info?id=${u_id}'>@${u_nick}</a>`;
+                    m.content = m.content.replace(match, u_a);
+                }
                 content.innerHTML = m.content;
                 message_content.appendChild(content);
                 if (m.content.includes('\n')) {
@@ -165,6 +196,16 @@
     };
 </script>
 <style>
+    .m_user_id
+    {
+        color: #6f7a88;
+        text-decoration: none;
+    }
+    .user_mentions {
+        color: #7289da;
+        font-weight: bold;
+    }
+
     .img_attachment {
         border: 1px solid black;
         width: 400px;

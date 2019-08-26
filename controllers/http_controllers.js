@@ -47,12 +47,37 @@ class http_controllers {
         app.get('/guild_channels', http_controllers.guild_channels);
         app.get('/guild_text_channel', http_controllers.guild_text_channel);
         app.get('/guild_text_channel_messages', http_controllers.guild_text_channel_messages);
+        app.get('/get_user_by_id', http_controllers.get_user_by_id);
 
         const port = 3000;
         app.listen(port, (err) => {
             if (err) return console.log('something bad happened', err);
             console.log(`http server is listening on 3000`);
             console.log(`    http://localhost:${port}/`);
+        });
+    }
+
+    static get_user_by_id(request, response) {
+        let user_id = `${request.query.id}`;
+        let client = require('../global').discord_controllers.client;
+        client.fetchUser(user_id).then(value => {
+            let u = {
+                avatar: value.avatar,
+                avatarURL: value.avatarURL,
+                defaultAvatarURL: value.defaultAvatarURL,
+                displayAvatarURL: value.displayAvatarURL,
+                bot: value.bot,
+                createdAt: value.createdAt,
+                noteD: value.note,
+                id: value.id,
+                tag: value.tag,
+                username: value.username,
+                discriminator: value.discriminator
+            };
+            let data = JSON.stringify(u);
+            response.send(`${data}`);
+        }).catch(reason => {
+            response.send(`error get_user_by_id`);
         });
     }
 
