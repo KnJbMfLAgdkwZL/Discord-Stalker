@@ -163,13 +163,17 @@
                         }
                     }
                 }
-                for (let attachment of m.attachments) {
-                    let url = attachment.url;
-                    if (!url)
-                        url = attachment.proxyURL;
-                    let html_control = getFile(url, true);
-                    message_content.appendChild(html_control);
-                    message_content.appendChild(document.createElement("br"));
+                if (m.attachments.length > 0) {
+                    for (let attachment of m.attachments) {
+                        let url = attachment.url;
+                        if (!url)
+                            url = attachment.proxyURL;
+                        message_content.innerHTML += `<a href='${url}'>download</a><br/>`;
+
+                        let html_control = getFile(url, true);
+                        message_content.appendChild(html_control);
+                        message_content.appendChild(document.createElement("br"));
+                    }
                 }
                 message.appendChild(message_content);
                 messagesDIV.appendChild(message);
@@ -196,11 +200,11 @@
     };
 </script>
 <style>
-    .m_user_id
-    {
+    .m_user_id {
         color: #6f7a88;
         text-decoration: none;
     }
+
     .user_mentions {
         color: #7289da;
         font-weight: bold;
