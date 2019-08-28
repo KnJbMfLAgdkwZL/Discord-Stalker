@@ -19,8 +19,11 @@
     <div>
 
     <style>
-        hr{
+/*        hr{
             background: #eae3e3;
+        }*/
+        body{
+            background-color: #36393f;      
         }
         * {
             padding: 0px;
@@ -37,22 +40,26 @@
             margin: 5px 8px;
         }
         .guild_chanel {
-		    margin-bottom: 5px;
-		    width: 300px;
+
+
 		}
 		.guilds {
 		    font-size: 15px;
 		    display: flex;
+            flex-wrap: wrap;
 		}
 		.guild {
-			border: 1px solid;
-		    padding: 3px;
+			border: 2px solid;
+		    padding: 5px;
 		    margin: 3px;
             border-radius: 5px;
             border-color: #7d7d7d;
+            box-shadow: 0 1px 0 rgba(0,0,0,.2), 0 1.5px 0 rgba(0,0,0,.05), 0 2px 0 rgba(0,0,0,.05);
+            width: 300px;
 		}
 		.chanel_user {
 		    display: flex;
+            border-radius: 59px;
 		}
 		.user_title_wraper {
 		    position: relative;
@@ -64,7 +71,10 @@
             display: flex;
         }
         .friend_true {
-            background: #3c3939;
+            background: #4848489c;
+        }
+        img.user_avatar {
+            border-radius: 90px;
         }
     </style>
 

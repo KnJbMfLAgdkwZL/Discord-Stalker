@@ -1,24 +1,20 @@
-<div>
-    <a href="/guild?id={{data.guild_id}}">{{data.guild_id}} | {{data.guild_name}} </a>
-    <br/>
-    <br/>
-    <h4>
-        {{data.channel_id}} | {{data.channel_name}}
-    </h4>
-    <br/>
-    <br/>
-</div>
+	<div class='buffer'></div>
+	<div class='content'>
+		<div class='channel_name'>
+		    <a href="/guild?id={{data.guild_id}}">{{data.guild_id}} | {{data.guild_name}} </a>
+		    <h4>
+		        {{data.channel_id}} | {{data.channel_name}}
+		    </h4>
+		</div>
 
 
-<div id="messages">
-</div>
+		<div id="messages">
+		</div>
 
-<br/>
-<div id="controls">
-    <button lastMessageID="" id="load_more">Load more</button>
-</div>
-<br/>
-
+		<div id="controls">
+		    <button lastMessageID="" id="load_more">Load more</button>
+		</div>
+	</div>
 <script>
     /**
      * @return {string}
@@ -168,7 +164,7 @@
                         let url = attachment.url;
                         if (!url)
                             url = attachment.proxyURL;
-                        message_content.innerHTML += `<a href='${url}'>download</a><br/>`;
+                        message_content.innerHTML += `<a href='${url}'>download</a>`;
 
                         let html_control = getFile(url, true);
                         message_content.appendChild(html_control);
@@ -177,7 +173,6 @@
                 }
                 message.appendChild(message_content);
                 messagesDIV.appendChild(message);
-                messagesDIV.appendChild(document.createElement("br"));
                 messagesDIV.appendChild(document.createElement("hr"));
             }
             let load_more = document.getElementById('load_more');
@@ -200,6 +195,26 @@
     };
 </script>
 <style>
+	body{
+		background-color: #36393f;
+	}
+	hr {
+	    margin-top: 0px;
+    	margin-bottom: 0px;
+        border-top: 1px solid rgba(251, 251, 251, 0.4);	
+	}
+	.message {
+	    padding-top: 20px;
+    	padding-bottom: 20px;
+	}
+	.buffer {
+		width: 312px;
+		min-height: 100px;
+		background-color: #2f3136;
+	}
+	div#body {
+	    display: flex;
+	}
     .m_user_id {
         color: #6f7a88;
         text-decoration: none;
@@ -224,26 +239,29 @@
     }
 
     .user_avatar {
-        display: inline-block;
-        height: 35px;
-        width: 35px;
-        border: 1px solid black;
+        height: 40px;
+        width: 40px;
         border-radius: 90px;
+        margin: -2px 20px 20px;
+	    cursor: pointer;
+	    opacity: 1;
     }
 
     .message_head_title {
-        display: inline-block;
-        margin-top: 7px;
-        margin-left: 10px;
-        position: absolute;
-        font-style: italic;
+		font-weight: 500;
     }
 
     .message_head {
-        margin-bottom: 5px;
+        display: flex;
     }
 
-    .message_content {
-        margin-left: 45px;
-    }
+	.message_content {
+	    margin-left: 80px;
+	    margin-top: -25px;
+	}
+	.channel_name {
+		padding-left: 20px;
+		box-shadow: 0 1px 0 rgba(0,0,0,.2), 0 1.5px 0 rgba(0,0,0,.05), 0 2px 0 rgba(0,0,0,.05);
+		padding-bottom: 10px;
+	}
 </style>
