@@ -23,6 +23,8 @@ class discord_controllers {
 
         //console.log(client.user.notes);
 
+
+
         //let discord_heper = require('../global').discord_heper;
         //discord_heper.start_join();
         //discord_heper.Log_users_guilds();

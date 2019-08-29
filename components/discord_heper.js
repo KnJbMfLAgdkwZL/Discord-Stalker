@@ -422,8 +422,16 @@ class discord_heper {
                     discriminator: member.user.discriminator,
                     avatar: member.user.avatar,
                     bot: member.user.bot,
-                    friend: false
+                    friend: false,
+                    deafened: false,
+                    muted: false
                 };
+
+                if (member.selfMute || member.serverMute)
+                    user_info.muted = true;
+                if (member.selfDeaf || member.serverDeaf)
+                    user_info.deafened = true;
+
                 if (!channels[channel.id])
                     channels[channel.id] = {
                         channel_id: channel.id,

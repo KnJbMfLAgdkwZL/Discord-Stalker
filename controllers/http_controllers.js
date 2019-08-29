@@ -183,6 +183,14 @@ class http_controllers {
                         if (!user.AVATAR)
                             user.AVATAR = user.defaultAvatarURL;
                     }
+
+                    user.deafened = false;
+                    user.muted = false;
+                    if (va.selfMute || va.serverMute)
+                        user.muted = true;
+                    if (va.selfDeaf || va.serverDeaf)
+                        user.deafened = true;
+
                     channel.members.push(user);
                 }
                 VoiceChannels.push(channel);
