@@ -21,6 +21,8 @@ class discord_controllers {
         console.log(`Logged in as ${client.user.tag}`);
         console.log();
 
+        require('../global').http_controllers.start();
+
         //console.log(client.user.notes);
 
 

@@ -1,57 +1,61 @@
 class http_controllers {
     constructor() {
         const express = require('express');
-        const app = express();
+        this.app = express();
         const bodyParser = require("body-parser");
-        app.use(bodyParser.urlencoded({
+        
+        this.app.use(bodyParser.urlencoded({
             extended: true
         }));
-        app.use(express.json());
+        this.app.use(express.json());
         const handlebars = require('express-handlebars');
         const path = require('path');
 
-        app.engine('.hbs', handlebars({
+        this.app.engine('.hbs', handlebars({
             defaultLayout: 'main',
             extname: '.hbs',
             layoutsDir: path.join(__dirname, '../views/layouts')
         }));
-        app.set('view engine', '.hbs');
-        app.set('views', path.join(__dirname, '../views'));
-        app.disable('view cache');
-        app.use(express.static('./views/public/'));
+        this.app.set('view engine', '.hbs');
+        this.app.set('views', path.join(__dirname, '../views'));
+        this.app.disable('view cache');
+        this.app.use(express.static('./views/public/'));
 
-        app.get('/find_friends', http_controllers.find_friends);
-        app.get('/show_dm_channels', http_controllers.show_dm_channels);
-        app.get('/show_dm_channel', http_controllers.show_dm_channel);
-        app.get('/edit_friends', http_controllers.edit_friends);
-        app.get('/delete_friend', http_controllers.delete_friend);
-        app.get('/friend_info', this.friend_info);
-        app.get('/guilds', this.guilds);
-        app.get('/guild_leave', this.guild_leave);
-        app.get('/bot_settings', http_controllers.bot_settings);
-        app.get('/bot_status', http_controllers.bot_status);
-        app.get('/', http_controllers.home);
-        app.get('/', http_controllers.home);
+        this.app.get('/find_friends', http_controllers.find_friends);
+        this.app.get('/show_dm_channels', http_controllers.show_dm_channels);
+        this.app.get('/show_dm_channel', http_controllers.show_dm_channel);
+        this.app.get('/edit_friends', http_controllers.edit_friends);
+        this.app.get('/delete_friend', http_controllers.delete_friend);
+        this.app.get('/friend_info', this.friend_info);
+        this.app.get('/guilds', this.guilds);
+        this.app.get('/guild_leave', this.guild_leave);
+        this.app.get('/bot_settings', http_controllers.bot_settings);
+        this.app.get('/bot_status', http_controllers.bot_status);
+        this.app.get('/', http_controllers.home);
+        this.app.get('/', http_controllers.home);
 
-        app.post('/add_friend', http_controllers.add_friend);
-        app.post('/guild_add', this.guild_add);
-        app.post('/status_edit', this.status_edit);
+        this.app.post('/add_friend', http_controllers.add_friend);
+        this.app.post('/guild_add', this.guild_add);
+        this.app.post('/status_edit', this.status_edit);
 
-        app.get('/download_Main_db', http_controllers.download_Main_db);
-        app.get('/download_Error_Log', http_controllers.download_Error_Log);
-        app.get('/Clear_Error_Log', http_controllers.Clear_Error_Log);
-        app.get('/Show_Error_Log', http_controllers.Show_Error_Log);
+        this.app.get('/download_Main_db', http_controllers.download_Main_db);
+        this.app.get('/download_Error_Log', http_controllers.download_Error_Log);
+        this.app.get('/Clear_Error_Log', http_controllers.Clear_Error_Log);
+        this.app.get('/Show_Error_Log', http_controllers.Show_Error_Log);
 
-        app.get('/guild', http_controllers.guild);
+        this.app.get('/guild', http_controllers.guild);
 
-        app.get('/guild_members', http_controllers.guild_members);
-        app.get('/guild_channels', http_controllers.guild_channels);
-        app.get('/guild_text_channel', http_controllers.guild_text_channel);
-        app.get('/guild_text_channel_messages', http_controllers.guild_text_channel_messages);
-        app.get('/get_user_by_id', http_controllers.get_user_by_id);
+        this.app.get('/guild_members', http_controllers.guild_members);
+        this.app.get('/guild_channels', http_controllers.guild_channels);
+        this.app.get('/guild_text_channel', http_controllers.guild_text_channel);
+        this.app.get('/guild_text_channel_messages', http_controllers.guild_text_channel_messages);
+        this.app.get('/get_user_by_id', http_controllers.get_user_by_id);
+    }
 
+    start()
+    {
         const port = 3000;
-        app.listen(port, (err) => {
+        this.app.listen(port, (err) => {
             if (err) return console.log('something bad happened', err);
             console.log(`http server is listening on 3000`);
             console.log(`    http://localhost:${port}/`);
