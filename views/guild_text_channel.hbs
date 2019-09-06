@@ -142,7 +142,8 @@
                     let u_a = `<a class="user_mentions" href='/friend_info?id=${u_id}'>@${u_nick}</a>`;
                     m.content = m.content.replace(match, u_a);
                 }
-                content.innerHTML = m.content;
+                let tcontent = m.content.replace('\n', '<br/>');
+                content.innerHTML = tcontent;
                 message_content.appendChild(content);
                 if (m.content.includes('\n')) {
                     let content_spl = m.content.split('\n');
@@ -151,6 +152,7 @@
                             if (is_file(c)) {
                                 let html_control = getFile(c);
                                 message_content.appendChild(html_control);
+                                message_content.appendChild(document.createElement("br"));
                             }
                         }
                     }
